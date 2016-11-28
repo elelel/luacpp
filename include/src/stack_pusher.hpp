@@ -44,8 +44,16 @@ namespace lua {
   template <>
   struct stack_pusher<const bool&> {
     static inline void push(state_base& l, const bool& v) {
-      l.pushnumber(v);
+      l.pushboolean(v);
     }
     const std::string name = "stack_pusher<bool>";    
+  };
+
+  template <>
+  struct stack_pusher<const double&> {
+    static inline void push(state_base& l, const bool& v) {
+      l.pushnumber(v);
+    }
+    const std::string name = "stack_pusher<double>";    
   };
 }
