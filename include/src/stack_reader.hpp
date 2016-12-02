@@ -13,7 +13,7 @@ namespace lua {
 
   template <>
   struct stack_reader<const char*> {
-    static inline const char* read(state& l, const int idx = -1) {
+    static inline const char* read(const state& l, const int idx = -1) {
       if (l.isstring()) {
         return l.tostring(idx);
       } else {
@@ -26,7 +26,7 @@ namespace lua {
 
   template <>
   struct stack_reader<std::string> {
-    static inline std::string read(state& l, const int idx = -1) {
+    static inline std::string read(const state& l, const int idx = -1) {
       return std::string(l.tostring(idx));
     }
       
@@ -35,7 +35,7 @@ namespace lua {
   
   template <>
   struct stack_reader<int> {
-    static inline int read(state& l, const int idx = -1) {
+    static inline int read(const state& l, const int idx = -1) {
       if (l.isnumber(idx)) {
         return static_cast<int>(l.tonumber(idx));
       } else {
@@ -48,7 +48,7 @@ namespace lua {
 
   template <>
   struct stack_reader<unsigned int> {
-    static inline int read(state& l, const int idx = -1) {
+    static inline int read(const state& l, const int idx = -1) {
       if (l.isnumber(idx)) {
         return static_cast<unsigned int>(l.tonumber(idx));
       } else {
@@ -61,7 +61,7 @@ namespace lua {
 
   template <>
   struct stack_reader<long> {
-    static inline int read(state& l, const int idx = -1) {
+    static inline int read(const state& l, const int idx = -1) {
       if (l.isnumber(idx)) {
         return static_cast<unsigned int>(l.tonumber(idx));
       } else {
@@ -74,7 +74,7 @@ namespace lua {
 
   template <>
   struct stack_reader<unsigned long> {
-    static inline int read(state& l, const int idx = -1) {
+    static inline int read(const state& l, const int idx = -1) {
       if (l.isnumber(idx)) {
         return static_cast<unsigned long>(l.tonumber(idx));
       } else {
@@ -87,7 +87,7 @@ namespace lua {
 
   template <>
   struct stack_reader<double> {
-    static inline double read(state& l, const int idx = -1) {
+    static inline double read(const state& l, const int idx = -1) {
       if (l.isnumber(idx)) {
         return static_cast<double>(l.tonumber(idx));
       } else {
@@ -100,7 +100,7 @@ namespace lua {
   
   template <>
   struct stack_reader<bool> {
-    static inline int read(state& l, const int idx = -1) {
+    static inline int read(const state& l, const int idx = -1) {
       if (l.isboolean(idx)) {
         return static_cast<bool>(l.toboolean(idx));
       } else {

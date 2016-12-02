@@ -37,99 +37,99 @@ namespace lua {
     }
 
     // Translations of standard lua_ functions
-    inline void pop(const int n) {
+    inline void pop(const int n) const {
       lua_pop(L_, n);
     }
 
-    inline void getglobal(const char* name) {
+    inline void getglobal(const char* name) const {
       lua_getglobal(L_, name);
     }
     
-    inline void getfield(int idx, const char* key) {
+    inline void getfield(int idx, const char* key) const {
       lua_getfield(L_, idx, key);
     }
 
-    inline void getfield(const char* key) {
+    inline void getfield(const char* key) const {
       getfield(-1, key);
     }
 
-    inline void setfield(int idx, const char* key) {
+    inline void setfield(int idx, const char* key) const {
       lua_setfield(L_, idx, key);
     }
     
-    inline void setfield(const char* key) {
+    inline void setfield(const char* key) const {
       setfield(-1, key);
     }
 
-    inline int luatype(int idx = -1) {
+    inline int luatype(int idx = -1) const {
       return lua_type(L_, idx);
     }
 
-    inline const char* luatypename(int tp) {
+    inline const char* luatypename(int tp) const {
       return lua_typename(L_, tp);
     }
 
-    inline bool isnil(int idx = -1) {
+    inline bool isnil(int idx = -1) const {
       return static_cast<bool>(lua_isnil(L_, idx));
     }
     
-    inline bool isnumber(int idx = -1) {
+    inline bool isnumber(int idx = -1) const {
       return lua_isnumber(L_, idx) == 1;
     }
 
-    inline bool istable(int idx = -1) {
+    inline bool istable(int idx = -1) const {
       return lua_istable(L_, idx) == 1;
     }
 
-    inline bool isstring(int idx = -1) {
+    inline bool isstring(int idx = -1) const {
       return lua_isstring(L_, idx) == 1;
     }
 
-    inline bool isboolean(int idx = -1) {
+    inline bool isboolean(int idx = -1) const {
       return lua_isboolean(L_, idx) == 1;
     }
     
-    inline lua_Number tonumber(int idx = -1) {
+    inline lua_Number tonumber(int idx = -1) const {
       return lua_tonumber(L_, idx);
     }
     
-    inline const char* tostring(int idx = -1) {
+    inline const char* tostring(int idx = -1) const {
       return lua_tostring(L_, idx);
     }
     
-    inline bool toboolean(int idx = -1) {
+    inline bool toboolean(int idx = -1) const {
       return lua_toboolean(L_, idx) == 1;
     }
 
-    inline void pushstring(const char* s) {
+    inline void pushstring(const char* s) const {
       lua_pushstring(L_, s);
     }
 
-    inline void pushnumber(const lua_Number& v) {
+    inline void pushnumber(const lua_Number& v) const {
       lua_pushnumber(L_, v);
     }
 
-    inline void pushboolean(const bool& v) {
+    inline void pushboolean(const bool& v) const {
       lua_pushboolean(L_, v);
     }
 
-    inline void pushnil() {
+    inline void pushnil() const {
       lua_pushnil(L_);
     }
 
-    inline void pushcclosure(lua_CFunction fn, int n) {
+    inline void pushcclosure(lua_CFunction fn, int n) const {
       lua_pushcclosure(L_, fn, n);
     }
 
-    inline int next(int idx = -1) {
+    inline int next(int idx = -1) const {
       return lua_next(L_, idx);
     }
 
-    inline void createtable(int narr, int nrec) {
+    inline void createtable(int narr, int nrec) const {
       lua_createtable(L_, narr, nrec);
     }
 
-    inline void settable(int index) {
+    inline void settable(int index) const {
       lua_settable(L_, index);
     }
 

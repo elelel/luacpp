@@ -10,7 +10,7 @@ namespace lua {
 
   template <>
   struct stack_pusher<const char* const&> {
-    static inline void push(state_base& l, const char* const& v ) {
+    static inline void push(const state_base& l, const char* const& v ) {
       l.pushstring(v);
     }
 
@@ -19,7 +19,7 @@ namespace lua {
 
   template <>
   struct stack_pusher<const std::string&> {
-    static inline void push(state_base& l, const std::string& v) {
+    static inline void push(const state_base& l, const std::string& v) {
       l.pushstring(v.c_str());
     }
     const std::string name = "stack_pusher<std::string>";
@@ -27,7 +27,7 @@ namespace lua {
     
   template <>
   struct stack_pusher<const int&> {
-    static inline void push(state_base& l, const int& v) {
+    static inline void push(const state_base& l, const int& v) {
       l.pushnumber(v);
     }
     const std::string name = "stack_pusher<int>";
@@ -35,7 +35,7 @@ namespace lua {
 
   template <>
   struct stack_pusher<const unsigned int&> {
-    static inline void push(state_base& l, const int& v) {
+    static inline void push(const state_base& l, const int& v) {
       l.pushnumber(v);
     }
     const std::string name = "stack_pusher<int>";
@@ -44,7 +44,7 @@ namespace lua {
     
   template <>
   struct stack_pusher<const long&> {
-    static inline void push(state_base& l, const int& v) {
+    static inline void push(const state_base& l, const int& v) {
       l.pushnumber(v);
     }
     const std::string name = "stack_pusher<long>";
@@ -59,7 +59,7 @@ namespace lua {
   };
   template <>
   struct stack_pusher<const bool&> {
-    static inline void push(state_base& l, const bool& v) {
+    static inline void push(const state_base& l, const bool& v) {
       l.pushboolean(v);
     }
     const std::string name = "stack_pusher<bool>";    
@@ -67,7 +67,7 @@ namespace lua {
 
   template <>
   struct stack_pusher<const double&> {
-    static inline void push(state_base& l, const bool& v) {
+    static inline void push(const state_base& l, const bool& v) {
       l.pushnumber(v);
     }
     const std::string name = "stack_pusher<double>";    
