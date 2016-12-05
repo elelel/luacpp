@@ -31,7 +31,7 @@ namespace lua {
     }
         
     void swap(type& other) {
-      state::swap(other);
+      state_base::swap(other);
     }
     
     type& operator=(const type& other) {
