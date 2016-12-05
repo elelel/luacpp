@@ -100,7 +100,7 @@ namespace lua {
   
   template <>
   struct stack_reader<bool> {
-    static inline int read(const state& l, const int idx = -1) {
+    static inline bool read(const state& l, const int idx = -1) {
       if (l.isboolean(idx)) {
         return static_cast<bool>(l.toboolean(idx));
       } else {
