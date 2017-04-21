@@ -1,0 +1,3 @@
+[submodule "contrib/Catch"]
+	path = contrib/Catch
+	url = https://github.com/philsquared/Catch.git
