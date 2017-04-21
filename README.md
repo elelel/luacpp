@@ -20,8 +20,9 @@ dirs as well. Link the native C Lua library to your project as usual if needed.
 
 ```c++
 #include <cassert>
+#include <string>
 
-#include <luacpp>
+#include <luacpp/luacpp>
 
 void main(int main(int argc, char *argv[]) {
  lua::state s;
