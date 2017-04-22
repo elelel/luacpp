@@ -1,0 +1,10 @@
+#pragma once
+
+#include "../../src/entity.hpp"
+// Default specializations
+#include "../../src/entities/boolean.hpp"
+#include "../../src/entities/integral.hpp"
+#include "../../src/entities/floating.hpp"
+#include "../../src/entities/string.hpp"
+//#include "../../src/entities/table.hpp"
+

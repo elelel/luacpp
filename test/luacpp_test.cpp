@@ -57,46 +57,21 @@ SCENARIO("Test state (only native calls)") {
   }
 }
 
-SCENARIO("Test type adapter with basic types") {
+SCENARIO("Test basic type entities") {
   lua::state s;
-  GIVEN("An int") {
-    int initial = 0x12345678;
-    WHEN("Writing it to stack") {
-      s.push<>(initial);
-      THEN("It should be on stack as number") {
-        REQUIRE(s.isnumber(-1));
-        THEN("Read it, the numbers should match") {
-          auto actual_unsafe = s.at<decltype(initial)>(-1).get_unsafe();
-          REQUIRE(actual_unsafe == initial);
-          auto actual_safe = s.at<decltype(initial)>(-1).get();
-          REQUIRE(actual_safe == initial);
-        }
-      }
-    }
-  }
-  
-  GIVEN("A double") {
-    double initial{1.0/3.0};
-    WHEN("Writing it to stack") {
-      s.push<>(initial);
-      THEN("It should be on stack as number") {
-        REQUIRE(s.isnumber(-1));
-        THEN("Read it, the numbers should match") {
-          auto actual_unsafe = s.at<decltype(initial)>(-1).get_unsafe();
-          REQUIRE(actual_unsafe == initial);
-          auto actual_safe = s.at<decltype(initial)>(-1).get();
-          REQUIRE(actual_safe == initial);
-        }
-      }
-    }
-  }
   GIVEN("A bool") {
-    bool initial = true;
-    WHEN("Writing it to stack") {
-      s.push<>(initial);
-      THEN("It should be on stack as string") {
+    WHEN("is pushed as literal") {
+      s.push<>(true);
+      THEN("The last item on stack should be boolean") {
         REQUIRE(s.isboolean(-1));
-        THEN("Read it, the booleands should match") {
+      }
+    }
+    WHEN("is pushed as named param") {
+      bool initial = true;
+      s.push<>(initial);
+      THEN("The last item on stack should be boolean") {
+        REQUIRE(s.isboolean(-1));
+        THEN("Read it, the booleans should match") {
           auto actual_unsafe = s.at<decltype(initial)>(-1).get_unsafe();
           REQUIRE(actual_unsafe == initial);
           auto actual_safe = s.at<decltype(initial)>(-1).get();
@@ -106,6 +81,65 @@ SCENARIO("Test type adapter with basic types") {
     }
   }
   
+  GIVEN("An int") {
+    WHEN("is pushed as literal") {
+      s.push<>(123);
+      THEN("The last item on stack should be number") {
+        REQUIRE(s.isnumber(-1));
+      }
+    }
+    WHEN("is pushed as named param") {
+      int initial = 0x12345678;
+      s.push<>(initial);
+      THEN("It should be on stack as number") {
+        REQUIRE(s.isnumber(-1));
+        THEN("Read it, the numbers should match") {
+          auto actual_unsafe = s.at<decltype(initial)>(-1).get_unsafe();
+          REQUIRE(actual_unsafe == initial);
+          auto actual_safe = s.at<decltype(initial)>(-1).get();
+          REQUIRE(actual_safe == initial);
+        }
+      }
+    }
+  }
+
+  GIVEN("A double") {
+    WHEN("is pushed as literal") {
+      s.push<>(123.45);
+      THEN("The last item on stack should be number") {
+        REQUIRE(s.isnumber(-1));
+      }
+    }
+    WHEN("Writing it to stack") {
+      double initial{1.0/3.0};
+      s.push<>(initial);
+      THEN("The last item on stack should be number") {
+        REQUIRE(s.isnumber(-1));
+        THEN("Read it, the numbers should match") {
+          auto actual_unsafe = s.at<decltype(initial)>(-1).get_unsafe();
+          REQUIRE(actual_unsafe == initial);
+          auto actual_safe = s.at<decltype(initial)>(-1).get();
+          REQUIRE(actual_safe == initial);
+        }
+      }
+    }
+  }
+
+  GIVEN("A char* literal") {
+    WHEN("Writing it to stack") {
+      s.push<>("Testing...");
+      THEN("It should be on stack as string") {
+        REQUIRE(s.isstring(-1));
+        THEN("Read it, the strings should match") {
+          auto actual_unsafe = s.at<decltype("Testing...")>(-1).get_unsafe();
+          REQUIRE(strcmp(actual_unsafe, "Testing...") == 0);
+          auto actual_safe = s.at<decltype("Testing...")>(-1).get();
+          REQUIRE(strcmp(actual_safe, "Testing...") == 0);
+        }
+      }
+    }
+  }
+
   GIVEN("A char[]") {
     char initial[] = "Testing...";
     WHEN("Writing it to stack") {
@@ -171,7 +205,7 @@ SCENARIO("Test type adapter with basic types") {
       }
     }
   }
-  
+
   GIVEN("An std::string") {
     std::string initial{"Testing"};
     WHEN("Writing it to stack") {
@@ -186,9 +220,11 @@ SCENARIO("Test type adapter with basic types") {
         }
       }
     }
-  } 
+  }
+  
 }
 
+/*
 SCENARIO("Table test") {
   GIVEN("Lua state and custom table class") {
     lua::state s;
@@ -248,13 +284,16 @@ SCENARIO("Table test") {
   }
 }
 
-SCENARIO("Test pcall") {
+
+SCENARIO("pcall test") {
   GIVEN("Lua state") {
     lua::state s;
-    WHEN("Print a string") {
-      s.push<>("String");
-      typedef std::tuple<std::string> return_type;
-      
+    WHEN("call print") {
+      s.push<>("Direct stack call");
+      s.push<>("print");
+      s.pcall(1, 1, 0);
+      //s.pcall<std::tuple<>>("print", std::make_tuple("Hello world"));
     }
   }
 }
+*/

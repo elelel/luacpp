@@ -1,6 +1,0 @@
-#pragma once
-
-#include "../../src/types/numeric.hpp"
-#include "../../src/types/boolean.hpp"
-#include "../../src/types/string.hpp"
-

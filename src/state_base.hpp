@@ -11,26 +11,36 @@ extern "C" {
 
 #include "tuple_utils.hpp"
 
-#define LUACPP_DETAIL_NATIVE_STATE_API2( RETURN_TYPE, NAME)      \
-  inline RETURN_TYPE NAME() const {                              \
-    typedef RETURN_TYPE return_type;                             \
-    return RETURN_TYPE(lua_##NAME(l_));                          \
-  };                                                             \
+#define LUACPP_DETAIL_NATIVE_STATE_API2( RETURN_TYPE, NAME)     \
+  inline RETURN_TYPE NAME() const {                             \
+    typedef RETURN_TYPE return_type;                            \
+    return RETURN_TYPE(lua_##NAME(l_));                         \
+  };                                                            \
   
-#define LUACPP_DETAIL_NATIVE_STATE_API4( RETURN_TYPE, NAME,      \
-                                         TYPE1, ARG1)            \
-  inline RETURN_TYPE NAME(TYPE1 ARG1) const {                    \
-    typedef RETURN_TYPE return_type;                             \
-    return return_type(lua_##NAME(l_, ARG1));                    \
-  };                                                             \
+#define LUACPP_DETAIL_NATIVE_STATE_API4( RETURN_TYPE, NAME,     \
+                                         TYPE1, ARG1)           \
+  inline RETURN_TYPE NAME(TYPE1 ARG1) const {                   \
+    typedef RETURN_TYPE return_type;                            \
+    return return_type(lua_##NAME(l_, ARG1));                   \
+  };                                                            \
 
-#define LUACPP_DETAIL_NATIVE_STATE_API6( RETURN_TYPE, NAME,      \
-                                         TYPE1, ARG1,            \
-                                         TYPE2, ARG2)            \
-  inline RETURN_TYPE NAME(TYPE1 ARG1, TYPE2 ARG2) const {        \
-    typedef RETURN_TYPE return_type;                             \
-    return RETURN_TYPE(lua_##NAME(l_, ARG1, ARG2));              \
-  };                                                             \
+#define LUACPP_DETAIL_NATIVE_STATE_API6( RETURN_TYPE, NAME,     \
+                                         TYPE1, ARG1,           \
+                                         TYPE2, ARG2)           \
+  inline RETURN_TYPE NAME(TYPE1 ARG1, TYPE2 ARG2) const {       \
+    typedef RETURN_TYPE return_type;                            \
+    return RETURN_TYPE(lua_##NAME(l_, ARG1, ARG2));             \
+  };                                                            \
+
+#define LUACPP_DETAIL_NATIVE_STATE_API8( RETURN_TYPE, NAME,     \
+                                         TYPE1, ARG1,           \
+                                         TYPE2, ARG2,           \
+                                         TYPE3, ARG3)           \
+  inline RETURN_TYPE NAME(TYPE1 ARG1, TYPE2 ARG2,               \
+                          TYPE3 ARG3) const {                   \
+    typedef RETURN_TYPE return_type;                            \
+    return RETURN_TYPE(lua_##NAME(l_, ARG1, ARG2, ARG3));       \
+  };                                                            \
 
 namespace lua {
 
@@ -132,10 +142,12 @@ namespace lua {
                                     int, idx)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, gettable,
                                     int, idx)
-    LUACPP_DETAIL_NATIVE_STATE_API4(int, pcall,
+
+    LUACPP_DETAIL_NATIVE_STATE_API8(int, pcall,
                                     int, nargs,
                                     int, nresults,
                                     int, errfunc)
+
 
     protected:
     lua_State* l_;

@@ -35,6 +35,18 @@ namespace lua {
   struct type_adapter<const char*> : public type_adapter_pchar<const char*> {
   };
 
+  template <>
+  struct type_adapter<char* const> : public type_adapter_pchar<char* const> {
+  };
+
+  template <>
+  struct type_adapter<const char* const> : public type_adapter_pchar<const char* const> {
+  };
+
+  template <>
+  struct type_adapter<const char* const&> : public type_adapter_pchar<const char* const&> {
+  };
+
   template <size_t X>
   struct type_adapter<char[X]> {
     typedef char value_type[X];

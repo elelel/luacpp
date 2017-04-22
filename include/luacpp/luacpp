@@ -1,6 +1,5 @@
 #pragma once
 
 #include "state"
-#include "types"
-#include "table"
+#include "entity"
 

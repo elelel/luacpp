@@ -4,9 +4,13 @@
 
 #include "state_base.hpp"
 
-#include "stack_adapter.hpp"
+#include "entity.hpp"
 
 namespace lua {
+  struct state;
+  template <typename derived_t, typename T, typename read_t>
+  struct entity;
+  
   struct state : public state_base {
 
     typedef state type;
@@ -23,8 +27,9 @@ namespace lua {
     }
 
     template <typename T>
-    stack_value<T> at(int idx) const {
-      return stack_adapter(*this).at<T>(idx);
+    auto at(int idx) const -> typename entity_type<T>::value {
+      typedef typename entity_type<T>::value return_type;
+      return return_type(*this, idx);
     }
 
     template <typename T>
@@ -32,8 +37,9 @@ namespace lua {
       at<T>(0) = value;
     }
 
-    template <typename return_tuple_t, typename args_tuple_t>
-    inline return_tuple_t pcall(const char* name, const args_tuple_t& args) const {
+    template <typename return_tuple_t, typename args_tuple_t, typename result_callback_t>
+    inline void call_function(const char* name, const args_tuple_t& args,
+                              result_callback_t f) {
       getglobal(name);
       if (isfunction(-1)) {
         push_tuple(args);
@@ -41,10 +47,11 @@ namespace lua {
                        std::tuple_size<return_tuple_t>::value, 0);
         if (rc == 0) {
           auto rslt = get_values<return_tuple_t>();
+          f(rslt);
           pop(std::tuple_size<return_tuple_t>::value);
           return rslt;
         } else {
-          throw std::runtime_error(std::string("pcall failed: ") + name);
+          throw std::runtime_error(std::string("call_function p_call failed: ") + name);
         }
       } else {
         throw std::runtime_error(std::string(name) + " is not a function in Lua global list, can't pcall");
