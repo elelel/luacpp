@@ -75,7 +75,7 @@ SCENARIO("Test type adapter with basic types") {
     }
   }
   
- GIVEN("A double") {
+  GIVEN("A double") {
     double initial{1.0/3.0};
     WHEN("Writing it to stack") {
       s.push<>(initial);
@@ -90,7 +90,7 @@ SCENARIO("Test type adapter with basic types") {
       }
     }
   }
-   GIVEN("A bool") {
+  GIVEN("A bool") {
     bool initial = true;
     WHEN("Writing it to stack") {
       s.push<>(initial);
