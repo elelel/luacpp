@@ -20,19 +20,26 @@
 #define LUACPP_TABLE_FIELD_WITH_STR_KEY( NAME, KEY_TYPE, VALUE_TYPE )   \
   struct NAME##_type : public lua::table_field {              \
     using lua::table_field::table_field;                                \
-                                                                        \
-    void set(VALUE_TYPE value) {                                        \
+    void set(VALUE_TYPE value) const  {                                 \
       table_field::set<KEY_TYPE, VALUE_TYPE>(#NAME, value);             \
     }                                                                   \
                                                                         \
-    VALUE_TYPE get_unsafe() {                                           \
+    VALUE_TYPE get_unsafe() const {                                     \
       return table_field::get_unsafe<KEY_TYPE, VALUE_TYPE>(#NAME);      \
     }                                                                   \
                                                                         \
-    VALUE_TYPE get() {                                                  \
+    VALUE_TYPE get() const {                                            \
       return table_field::get<KEY_TYPE, VALUE_TYPE>(#NAME);             \
     }                                                                   \
                                                                         \
+    VALUE_TYPE operator=(VALUE_TYPE value) const {                      \
+      set(value);                                                       \
+      return value;                                                     \
+    }                                                                   \
+                                                                        \
+    VALUE_TYPE operator()() const {                                     \
+      return get();                                                     \
+    }                                                                   \
   };                                                                    \
   NAME##_type NAME{s_, idx_};                                           \
 
@@ -41,18 +48,26 @@
   struct integral_key_field_##NAME##_type : public lua::table_field {   \
     using lua::table_field::table_field;                                \
                                                                         \
-    void set(VALUE_TYPE value) {                                        \
+    void set(VALUE_TYPE value) const {                                  \
       table_field::set<KEY_TYPE, VALUE_TYPE>(NAME, value);              \
     }                                                                   \
                                                                         \
-    VALUE_TYPE get_unsafe() {                                           \
+    VALUE_TYPE get_unsafe() const {                                     \
       return table_field::get_unsafe<KEY_TYPE, VALUE_TYPE>(NAME);       \
     }                                                                   \
                                                                         \
-    VALUE_TYPE get() {                                                  \
+    VALUE_TYPE get() const {                                            \
       return table_field::get<KEY_TYPE, VALUE_TYPE>(NAME);              \
     }                                                                   \
                                                                         \
+    VALUE_TYPE operator=(VALUE_TYPE value) const {                      \
+      set(value);                                                       \
+      return value;                                                     \
+    }                                                                   \
+                                                                        \
+    VALUE_TYPE operator()() const {                                     \
+      return get();                                                     \
+    }                                                                   \
   };                                                                    \
   integral_key_field_##NAME##_type integral_##NAME{s_, idx_};           \
 
@@ -85,7 +100,7 @@ namespace lua {
     }
 
     template <typename key_t, typename value_t>
-    auto get_unsafe(key_t key) ->
+    auto get_unsafe(key_t key) const ->
       decltype(type_adapter<value_t>::get_unsafe(lua::state_base(), int{0})) {
       stack_adapter(s_).at<key_t>(0) = key;
       s_.gettable(idx_ - 1);
@@ -95,7 +110,7 @@ namespace lua {
     }
 
     template <typename key_t, typename value_t>
-    auto get(key_t key) ->
+    auto get(key_t key) const ->
       decltype(type_adapter<value_t>::get_unsafe(lua::state_base(), int{0})) {
       if (type_matches()) {
         stack_adapter(s_).at<key_t>(0) = key;

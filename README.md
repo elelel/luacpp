@@ -42,10 +42,10 @@ void main(int main(int argc, char *argv[]) {
  // Create my_table object
  s.newtable(-1);
  my_table(s, -1);
- t.name.set("Gold");
- t.price.set(1023.12);
- assert(t.name.get() == "Gold);
- assert(t.price.get() == 1023.12);
+ t.name = "Gold";
+ t.price = 1023.12;
+ assert(t.name() == "Gold";
+ assert(t.price() == 1023.12);
 }
 ```
 

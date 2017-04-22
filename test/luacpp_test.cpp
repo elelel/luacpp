@@ -205,6 +205,7 @@ SCENARIO("Table test") {
           LUACPP_TABLE_FIELD_WITH_STR_KEY(rating, const char*, const char*);
           LUACPP_TABLE_FIELD_WITH_STR_KEY(price, std::string, double);
           LUACPP_TABLE_FIELD_WITH_INT_KEY(1929, int, const char*);
+          LUACPP_TABLE_FIELD_WITH_STR_KEY(exchange_code, std::string, std::string);
           LUACPP_STATIC_TABLE_END();
           // Instantiate my_table
           my_table t(s, -1);
@@ -213,23 +214,31 @@ SCENARIO("Table test") {
           const char* initial_rating = "B++";
           double initial_price{1.2345};
           const char* initial_1929 = "The year of great market crash";
+          const std::string initial_exchange_code = "NYSE";
+          // Test setters
           t.name.set(initial_name);
           t.ticker.set(initial_ticker);
           t.rating.set(initial_rating);
           t.price.set(initial_price);
           t.integral_1929.set(initial_1929);
+          // Test operator=() overloads
+          t.exchange_code = initial_exchange_code;
           THEN("Try to get it") {
+            // Test getters
             std::string actual_name = t.name.get();
             std::string actual_ticker = t.ticker.get();
             const char* actual_rating = t.rating.get();
             const char* actual_1929 = t.integral_1929.get();
             double actual_price = t.price.get();
+            // Test operator()() overlaods
+            std::string actual_exchange_code = t.exchange_code();
             
             REQUIRE(actual_name == initial_name);
             REQUIRE(actual_ticker == initial_ticker);
             REQUIRE(strcmp(actual_rating, initial_rating) == 0);
             REQUIRE(actual_price == initial_price);
             REQUIRE(strcmp(actual_1929, initial_1929) == 0);
+            REQUIRE(actual_exchange_code == initial_exchange_code);
           }
         }
       }
