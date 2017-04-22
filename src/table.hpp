@@ -7,18 +7,18 @@
 
 #define LUACPP_STATIC_TABLE_BEGIN( TABLE_NAME )         \
   class TABLE_NAME {                                    \
-  private:                                              \
-  const lua::state_base s_;                             \
-  const int idx_;                                       \
-  public:                                               \
-  TABLE_NAME(const lua::state_base& s, int idx) :       \
-    s_(s),                                              \
-    idx_(idx) {                                         \
-  }                                                     \
+private:                                                \
+ const lua::state_base s_;                              \
+ const int idx_;                                        \
+public:                                                 \
+ TABLE_NAME(const lua::state_base& s, int idx) :        \
+   s_(s),                                               \
+   idx_(idx) {                                          \
+   }                                                    \
 
 
 #define LUACPP_TABLE_FIELD_WITH_STR_KEY( NAME, KEY_TYPE, VALUE_TYPE )   \
-  struct NAME##_type : public lua::table_field {              \
+  struct NAME##_type : public lua::table_field {                        \
     using lua::table_field::table_field;                                \
     void set(VALUE_TYPE value) const  {                                 \
       table_field::set<KEY_TYPE, VALUE_TYPE>(#NAME, value);             \
@@ -43,6 +43,9 @@
   };                                                                    \
   NAME##_type NAME{s_, idx_};                                           \
 
+
+#define LUACPP_TABLE_FIELD( NAME, KEY_TYPE, VALUE_TYPE )        \
+  LUACPP_TABLE_FIELD_WITH_STR_KEY(NAME, KEY_TYPE, VALUE_TYPE)   \
 
 #define LUACPP_TABLE_FIELD_WITH_INT_KEY( NAME, KEY_TYPE, VALUE_TYPE )   \
   struct integral_key_field_##NAME##_type : public lua::table_field {   \

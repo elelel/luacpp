@@ -201,7 +201,8 @@ SCENARIO("Table test") {
           // Declare a local table struct called my_table
           LUACPP_STATIC_TABLE_BEGIN(my_table);
           LUACPP_TABLE_FIELD_WITH_STR_KEY(name, std::string, std::string);
-          LUACPP_TABLE_FIELD_WITH_STR_KEY(ticker, const char*, std::string);
+          // LUACPP_TABLE_FIELD is an alias to LUACPP_TABLE_FIELD_WITH_STR_KEY
+          LUACPP_TABLE_FIELD(ticker, const char*, std::string);
           LUACPP_TABLE_FIELD_WITH_STR_KEY(rating, const char*, const char*);
           LUACPP_TABLE_FIELD_WITH_STR_KEY(price, std::string, double);
           LUACPP_TABLE_FIELD_WITH_INT_KEY(1929, int, const char*);
