@@ -44,8 +44,8 @@ public:                                                 \
   NAME##_type NAME{s_, idx_};                                           \
 
 
-#define LUACPP_TABLE_FIELD( NAME, KEY_TYPE, VALUE_TYPE )        \
-  LUACPP_TABLE_FIELD_WITH_STR_KEY(NAME, KEY_TYPE, VALUE_TYPE)   \
+#define LUACPP_TABLE_FIELD( NAME, VALUE_TYPE )                          \
+  LUACPP_TABLE_FIELD_WITH_STR_KEY(NAME, const char*, VALUE_TYPE)        \
 
 #define LUACPP_TABLE_FIELD_WITH_INT_KEY( NAME, KEY_TYPE, VALUE_TYPE )   \
   struct integral_key_field_##NAME##_type : public lua::table_field {   \
