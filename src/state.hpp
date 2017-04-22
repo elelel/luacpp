@@ -37,8 +37,8 @@ namespace lua {
       getglobal(name);
       if (isfunction(-1)) {
         push_tuple(args);
-        int rc = lua_pcall(l_, std::tuple_size<args_tuple_t>::value,
-                           std::tuple_size<return_tuple_t>::value, 0);
+        int rc = pcall(l_, std::tuple_size<args_tuple_t>::value,
+                       std::tuple_size<return_tuple_t>::value, 0);
         if (rc == 0) {
           auto rslt = get_values<return_tuple_t>();
           pop(std::tuple_size<return_tuple_t>::value);

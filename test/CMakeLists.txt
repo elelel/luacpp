@@ -5,6 +5,8 @@ get_filename_component(TOP_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PATH)
 set(CATCH "${TOP_DIR}/contrib/Catch")
 set(SRC "${TOP_DIR}/src")
 
+message("Catch dir ${CATCH}")
+
 if (NOT LUACPP_LUA_LIBRARIES)
   find_package(Lua51)
   if (NOT LUA_LIBRARIES)

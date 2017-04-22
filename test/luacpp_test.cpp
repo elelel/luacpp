@@ -247,3 +247,14 @@ SCENARIO("Table test") {
     
   }
 }
+
+SCENARIO("Test pcall") {
+  GIVEN("Lua state") {
+    lua::state s;
+    WHEN("Print a string") {
+      s.push<>("String");
+      typedef std::tuple<std::string> return_type;
+      
+    }
+  }
+}

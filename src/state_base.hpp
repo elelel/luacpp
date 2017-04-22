@@ -132,9 +132,12 @@ namespace lua {
                                     int, idx)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, gettable,
                                     int, idx)
+    LUACPP_DETAIL_NATIVE_STATE_API4(int, pcall,
+                                    int, nargs,
+                                    int, nresults,
+                                    int, errfunc)
 
-
-  protected:
+    protected:
     lua_State* l_;
   };
 }
