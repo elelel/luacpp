@@ -36,8 +36,8 @@ void main(int main(int argc, char *argv[]) {
  
  // Declare my_table structure for table accessor class
  LUACPP_STATIC_TABLE_BEGIN(my_table);
- LUACPP_TABLE_FIELD_WITH_STR_KEY(name, std::string, std::string);
- LUACPP_TABLE_FIELD_WITH_STR_KEY(price, std::string, double);
+ LUACPP_TABLE_FIELD(name, std::string, std::string);
+ LUACPP_TABLE_FIELD(price, std::string, double);
  LUACPP_STATIC_TABLE_END();
  // Create my_table object
  s.newtable(-1);
