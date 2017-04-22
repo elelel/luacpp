@@ -49,7 +49,7 @@ SCENARIO("Test state (only native calls)") {
       s.pushboolean(initial);
       THEN("Boolean on stack should match the boolean pushed") {
         REQUIRE(s.isboolean(-1));
-        auto actual = s.toboolean(-1);
+        auto actual = (bool)s.toboolean(-1);
         REQUIRE(actual == initial);
       }
     }

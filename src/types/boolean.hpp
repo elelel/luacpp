@@ -12,11 +12,11 @@ namespace lua {
     }
 
     inline static T get_unsafe(const lua::state_base& s, int idx) {
-      return s.toboolean(idx);
+      return T(s.toboolean(idx));
     }
     
     inline static void push(const lua::state_base& s, T value) {
-      return s.pushboolean(value);
+      return s.pushboolean((T)value);
     }
 
   };
