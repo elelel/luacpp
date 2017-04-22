@@ -30,6 +30,14 @@ namespace lua {
   };
 
   template <>
+  struct type_adapter<unsigned int> : public type_adapter_numeric<unsigned int> {
+  };
+
+  template <>
+  struct type_adapter<const unsigned int> : public type_adapter_numeric<const unsigned int> {
+  };
+
+  template <>
   struct type_adapter<double> : public type_adapter_numeric<double> {
   };
 
