@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tuple>
+
 #include "state_base.hpp"
 
 #include "stack_adapter.hpp"
@@ -26,12 +28,12 @@ namespace lua {
     }
 
     template <typename T>
-    void push(T value) {
+    void push(T value) const {
       at<T>(0) = value;
     }
 
     template <typename return_tuple_t, typename args_tuple_t>
-    inline return_tuple_t pcall(const char* name, const args_tuple_t& args) {
+    inline return_tuple_t pcall(const char* name, const args_tuple_t& args) const {
       getglobal(name);
       if (isfunction(-1)) {
         push_tuple(args);
@@ -59,7 +61,7 @@ namespace lua {
     typename std::enable_if<I < sizeof...(Tp), void>::type
     inline push_tuple(const std::tuple<Tp...>& t) const {
       typedef decltype(std::get<I>(t)) A;
-      type_adapter<A>::push(*this,  std::get<I>(t));
+      push<A>(std::get<I>(t));
       push_tuple<I + 1, Tp...>(t);
     }
 
