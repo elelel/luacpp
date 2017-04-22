@@ -44,7 +44,8 @@ void main(int main(int argc, char *argv[]) {
  my_table(s, -1);
  t.name = "Gold";
  t.price = 1023.12;
- assert(t.name() == "Gold";
+ // t.price = "string"; // This will file at compile time
+ assert(t.name() == "Gold");
  assert(t.price() == 1023.12);
 }
 ```
