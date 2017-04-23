@@ -1,7 +1,7 @@
 #pragma once
 
 namespace lua {
-  namespace type_policy {
+  namespace detail {
     template <typename T>
     struct boolean {
       // Booleans are ints in Lua
@@ -16,17 +16,9 @@ namespace lua {
         return s.toboolean(idx);
       }
 
-      inline static read_type get(::lua::state s, int idx) {
-        if (type_matches(s, idx)) {
-          return get_unsafe(s, idx);
-        }
-      }
-
       template <typename F>
-      inline static void apply(::lua::state s, int idx, F f) {
-        if (type_matches(s, idx)) {
-          f(s, idx);
-        }
+      inline static void apply_unsafe(::lua::state s, int idx, F f) {
+        f(s, idx);
       }
 
       inline static void set(::lua::state s, int idx, T value) {
@@ -34,16 +26,13 @@ namespace lua {
         if (idx != 0) s.replace(idx);
       }
     };
-  
   }
   
   template <>
-  struct get_type_policy<bool> {
-    typedef type_policy::boolean<bool> value;
+  struct type_policy<bool> : public detail::boolean<bool> {
   };
 
   template <>
-  struct get_type_policy<const bool> {
-    typedef type_policy::boolean<const bool> value;
+  struct type_policy<const bool> : public detail::boolean<const bool> {
   };
 }

@@ -2,7 +2,7 @@
 
 namespace lua {
 
-  namespace type_policy {
+  namespace detail {
     template <typename T>
     struct char_pointer {
       typedef T write_type;
@@ -17,17 +17,9 @@ namespace lua {
         return s.tostring(idx);
       }
 
-      inline static read_type get(::lua::state s, int idx) {
-        if (type_matches(s, idx)) {
-          return get_unsafe(s, idx);
-        }
-      }
-
       template <typename F>
-      inline static void apply(::lua::state s, int idx, F f) {
-        if (type_matches(s, idx)) {
-          f(s, idx);
-        }
+      inline static void apply_unsafe(::lua::state s, int idx, F f) {
+        f(s, idx);
       }
 
       inline static void set(::lua::state s, int idx, T value) {
@@ -49,17 +41,9 @@ namespace lua {
         return std::string(s.tostring(idx));
       }
 
-      inline static read_type get(::lua::state s, int idx) {
-        if (type_matches(s, idx)) {
-          return get_unsafe(s, idx);
-        }
-      }
-
       template <typename F>
-      inline static void apply(::lua::state s, int idx, F f) {
-        if (type_matches(s, idx)) {
-          f(s, idx);
-        }
+      inline static void apply_unsafe(::lua::state s, int idx, F f) {
+        f(s, idx);
       }
 
       inline static void set(::lua::state s, int idx, write_type value) {
@@ -70,39 +54,32 @@ namespace lua {
   }
 
   template <>
-  struct get_type_policy<char*> {
-    typedef type_policy::char_pointer<char*> value;
+  struct type_policy<char*> : public detail::char_pointer<char*> {
   };
 
   template <>
-  struct get_type_policy<const char*> {
-    typedef type_policy::char_pointer<const char*> value;
+  struct type_policy<const char*> : public detail::char_pointer<const char*> {
   };
 
   
   template <>
-  struct get_type_policy<std::string> {
-    typedef type_policy::std_string<std::string> value;
+  struct type_policy<std::string> : public detail::std_string<std::string> {
   };
 
   template <>
-  struct get_type_policy<const std::string> {
-    typedef type_policy::std_string<const std::string> value;
+  struct type_policy<const std::string> : public detail::std_string<const std::string> {
   };
 
   template <size_t N>
-  struct get_type_policy<char[N]> {
-    typedef type_policy::char_pointer<char*> value;
+  struct type_policy<char[N]> : public detail::char_pointer<char*> {
   };
 
   template <size_t N>
-  struct get_type_policy<const char[N]> {
-    typedef type_policy::char_pointer<char*> value;
+  struct type_policy<const char[N]> : public detail::char_pointer<char*> {
   };
 
   template <size_t N>
-  struct get_type_policy<const char(&)[N]> {
-    typedef type_policy::char_pointer<const char*> value;
+  struct type_policy<const char(&)[N]> : public detail::char_pointer<const char*> {
   };
     
 }

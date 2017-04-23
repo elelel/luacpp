@@ -3,108 +3,80 @@
 #define LUACPP_STATIC_TABLE_BEGIN( TABLE_NAME )         \
   class TABLE_NAME {                                    \
 private:                                                \
- const lua::state_base s_;                              \
+ const lua::state s_;                                   \
  const int idx_;                                        \
 public:                                                 \
- TABLE_NAME(const lua::state_base& s, int idx) :        \
+ TABLE_NAME(const lua::state& s, int idx) :             \
    s_(s),                                               \
    idx_(idx) {                                          \
    }                                                    \
 
 
-#define LUACPP_DETAIL_CAT(x, y) PRIMITIVE_CAT(x, y)
-#define LUACPP_DETAIL_PRIMITIVE_CAT(x, y) x ## y
-
-#define LUACPP_STATIC_TABLE(TABLE_NAME)
-
-#define LUACPP_ADD_TABLE_FIELD( TABLE_NAME, NAME, KEY_TYPE, VALUE_TYPE ) \
-  struct TABLE_NAME##_##NAME##_type : public lua::table_field {         \
-    using lua::table_field::table_field;                                \
-    void set(VALUE_TYPE value) const  {                                 \
-      table_field::set<KEY_TYPE, VALUE_TYPE>(#NAME, value);             \
+#define LUACPP_TABLE_FIELD_STR_KEY(NAME, KEY_TYPE, VALUE_TYPE )         \
+  struct NAME##_type_policy :                                           \
+    public ::lua::detail::table_field_policy_base<KEY_TYPE, VALUE_TYPE> { \
+    using base_type = ::lua::detail::table_field_policy_base<KEY_TYPE, VALUE_TYPE>; \
+                                                                        \
+    static inline read_type get_unsafe(::lua::state s, int idx)  {      \
+      return base_type::get_unsafe(s, idx, #NAME);                      \
     }                                                                   \
                                                                         \
-    VALUE_TYPE get_unsafe() const {                                     \
-      return table_field::get_unsafe<KEY_TYPE, VALUE_TYPE>(#NAME);      \
+    static inline void apply_unsafe(::lua::state s, int idx, std::function<void(const lua::state&, int)> f) { \
+      base_type::apply_unsafe(s, idx, f, #NAME);                        \
     }                                                                   \
                                                                         \
-    VALUE_TYPE get() const {                                            \
-      return table_field::get<KEY_TYPE, VALUE_TYPE>(#NAME);             \
-    }                                                                   \
-                                                                        \
-    VALUE_TYPE operator=(VALUE_TYPE value) const {                      \
-      set(value);                                                       \
-      return value;                                                     \
-    }                                                                   \
-                                                                        \
-    VALUE_TYPE operator()() const {                                     \
-      return get();                                                     \
+    static inline void set(::lua::state s, int idx, VALUE_TYPE value)   { \
+      base_type::set(s, idx, value, #NAME);                             \
     }                                                                   \
   };                                                                    \
-  LUACPP_DETAIL_PUSH_TABLE_FIELD_NAME( TABLE_NAME, NAME)                \
+  ::lua::entity<NAME##_type_policy> NAME{s_, idx_};                     \
+
+#define LUACPP_TABLE_FIELD(NAME, VALUE_TYPE)                    \
+  LUACPP_TABLE_FIELD_STR_KEY(NAME, const char*, VALUE_TYPE)     \
   
 
-
-
+#define LUACPP_STATIC_TABLE_END()               \
+  };                                            \
+  
+  
 namespace lua {
-  template <typename T, typename read_t>
-  struct table_field : public entity<table_field<T, read_t>, T, read_t> {
-    // The interface type should always be the base CRTP class
-    typedef entity<table_field<T, read_t>, T, read_t> interface_type;
+  namespace detail {
     
-    using entity<table_field<T, read_t>, T, read_t>::entity;
-    
-    inline bool type_matches() const {
-      return this->s_.istable(this->idx_);
-    }
+    template <typename key_t, typename value_t>
+    struct table_field_policy_base {
+      typedef value_t write_type;
+      typedef value_t read_type;
 
-    template <typename key_t>
-    inline read_t get_unsafe(key_t key) const {
-      this->s_.push<>(key);
-      s_.gettable(idx_ - 1);
-      auto rslt = entity_type<T>::value(this->s_, this->idx_);
-      s_.pop(1);
-      return rslt;
-    }
-
-    template <typename key_t>
-    inline void apply(key_t key, std::function<void(const lua::state&)>) {
-      if (type_matches()) {
-        this->s_.push<>(key);
-        s_.gettable(idx_ - 1);
-        f(s_);
-        s_.pop(1);
-      } else {
-        throw std::runtime_error("Can't apply function to table field from non-table lua variable in stack");
+      static inline bool type_matches(::lua::state s, int idx) {
+        return s.istable(idx); // Checks only for table type
       }
-    }
-
-    template <typename key_t>
-    read_t get(key_t key) const {
-      if (type_matches()) {
-        this->s_.push<>(key);
-        s_.gettable(idx_ - 1);
-        entity_type<T>::value(this->s_, this->idx_) v;
-        auto rslt = v.get();
-      } else {
-        throw std::runtime_error("Can't get table field from non-table lua variable in stack");
+      
+      static inline read_type get_unsafe(::lua::state s, int idx, key_t key) {
+        s.push<>(key);
+        s.gettable(idx - 1);
+        auto rslt = entity<type_policy<read_type>>(s, idx).get();
+        s.pop(1);
+        return rslt;
       }
-    }
-
-    inline void set(T value) const {
-      if (type_matches()) {
-        this->s_.push<>(key);
-        this->s_.push<>(value);
-        s_.gettable(idx_ - 1);
-      } else {
-        throw std::runtime_error("Can't create table field from non-table lua variable in stack");
+      
+      static inline void apply_unsafe(::lua::state s, int idx, std::function<void(const lua::state&, int)> f, key_t key) {
+        s.push<>(key);
+        s.gettable(idx - 1);
+        f(s, idx);
+        s.pop(1);
       }
-    }
-  };
 
-  template <>
-  struct entity_type<const bool> {
-    typedef table_field<bool>::interface_type value;
-  };
-    
+      static inline void set(::lua::state s, int idx, value_t value, key_t key)  {
+        if (type_matches(s, idx)) {
+          s.push<>(key);
+          s.push<>(value);
+          s.settable(idx - 2);
+        } else {
+          throw std::runtime_error("Can't create table field from non-table lua variable in stack");
+        }
+      }
+    };
+  
+  }
+  
 }

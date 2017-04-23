@@ -14,7 +14,7 @@ namespace lua {
   
   //Type adapter, maps C++ type to corresponding entity type.
   template <typename T>
-  struct get_type_policy;
+  struct type_policy;
   
   struct state : public state_base {
 
@@ -32,9 +32,8 @@ namespace lua {
     }
 
     template <typename T>
-    auto at(int idx) const -> entity<typename get_type_policy<T>::value> {
-      typedef entity<typename get_type_policy<T>::value> return_type;
-      return return_type(*this, idx);
+    auto at(int idx) const -> entity<type_policy<T>> {
+      return entity<type_policy<T>>(*this, idx);
     }
 
     template <typename T>
@@ -114,15 +113,12 @@ namespace lua {
     // Reads the value on stack without the check,
     // the return value is copy-constructed
     inline static T get_unsafe(::lua::state s, int idx);
-    // Reads the value on stack with the type_matches check,
-    // the return value is copy-constructed
-    inline static T get(::lua::state s, int idx);
-    // Puts the value on the stack, and calls function f(const lua::state&),
+    // Places the value on the stack if needed, and calls function f(const lua::state&, idx),
     // no copying should occur in the process
     template <typename F>
-    inline static void apply(::lua::state s, int idx, F f);
+    inline static void apply_unsafe(::lua::state s, int idx, F f, args...);
     // Puts the value on stack
-    inline static void set(::lua::state s, int idx, T value);
+    inline static void set(::lua::state s, int idx, T value, args...);
    */
 
   template <typename policy_t>
@@ -134,42 +130,57 @@ namespace lua {
       s_(s),
       idx_(idx) {
     }
-    
-    inline bool type_matches() const {
-      return policy_t::type_matches(s_, idx_);
+
+    // -- Forwarding to policy -
+    template <typename... Args>
+    inline bool type_matches(Args&&... args) const {
+      return policy_t::type_matches(s_, idx_, args...);
     }
-    
-    inline read_type get_unsafe() const {
-      return policy_t::get_unsafe(s_, idx_);
+
+    template <typename... Args>
+    inline read_type get_unsafe(Args&&... args) const {
+      return policy_t::get_unsafe(s_, idx_, args...);
     }
+
+    template <typename... Args>
+    inline void set(write_type value, Args&&... args) const {
+      policy_t::set(s_, idx_, value, args...);
+    }
+
+    template <typename F, typename... Args>
+    inline void apply_unsafe(F f, Args&&... args) {
+      policy_t::apply_unsafe(s_, idx_, f, args...);
+    }
+
+    // -- Syntactic suger --
     
-    inline read_type get() const {
-      if (type_matches()) {
-        return get_unsafe();
+    template <typename... Args>
+    inline read_type get(Args... args) const {
+      if (type_matches(args...)) {
+        return get_unsafe(args...);
       } else {
-        throw std::runtime_error("Luacpp safe entity get() failed: value at stack does not match the static type");
+        throw std::runtime_error("Can't get lua enity's value safely: typecheck failed");
+      }
+    }
+
+    template <typename F, typename... Args>
+    inline read_type apply(F f, Args... args) const {
+      if (type_matches(args...)) {
+        return apply_unsafe(args...);
+      } else {
+        throw std::runtime_error("Can't get lua enity's value safely: typecheck failed");
       }
     }
     
-    inline void set(write_type value) const {
-      policy_t::set(s_, idx_, value);
-      if (idx_ != 0) s_.replace(idx_);
-    }
-
-    template <typename F>
-    inline void apply(F f) {
-      policy_t::apply(s_, idx_, f);
+    template <typename... Args>
+    inline read_type operator()(Args... args) const {
+      return get(args...);
     }
 
     // Note that operator= sets the entity's content, does not assign one entity to another
     inline void operator=(write_type value) const {
       set(value);
     }
-    
-    inline read_type operator()() const {
-      return get();
-    }
-    
   protected:
     const lua::state s_;
     const int idx_;
