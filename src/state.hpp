@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <tuple>
 
 #include "state_base.hpp"
