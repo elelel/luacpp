@@ -80,7 +80,7 @@ SCENARIO("Test basic type entities") {
       }
     }
   }
-  
+    
   GIVEN("An int") {
     WHEN("is pushed as literal") {
       s.push<>(123);
@@ -124,7 +124,7 @@ SCENARIO("Test basic type entities") {
       }
     }
   }
-
+  
   GIVEN("A char* literal") {
     WHEN("Writing it to stack") {
       s.push<>("Testing...");
@@ -221,10 +221,9 @@ SCENARIO("Test basic type entities") {
       }
     }
   }
-  
 }
-
 /*
+
 SCENARIO("Table test") {
   GIVEN("Lua state and custom table class") {
     lua::state s;

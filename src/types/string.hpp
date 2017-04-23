@@ -1,111 +1,109 @@
 #pragma once
 
-#include <string>
-
-#include "../type_adapter.hpp"
-
 namespace lua {
 
-  /*
-    Non-generics: char pointer array should always be read as const
-  */
+  namespace type_policy {
+    template <typename T>
+    struct char_pointer {
+      typedef T write_type;
+      // Char pointer array should always be read as const
+      typedef const char* read_type;
+      
+      inline static bool type_matches(::lua::state s, int idx) {
+        return s.isstring(idx);
+      }
+    
+      inline static read_type get_unsafe(::lua::state s, int idx) {
+        return s.tostring(idx);
+      }
+
+      inline static read_type get(::lua::state s, int idx) {
+        if (type_matches(s, idx)) {
+          return get_unsafe(s, idx);
+        }
+      }
+
+      template <typename F>
+      inline static void apply(::lua::state s, int idx, F f) {
+        if (type_matches(s, idx)) {
+          f(s, idx);
+        }
+      }
+
+      inline static void set(::lua::state s, int idx, T value) {
+        s.pushstring(write_type(value));
+        if (idx != 0) s.replace(idx);
+      }
+    };
+
+    template <typename T>
+    struct std_string {
+      typedef T write_type;
+      typedef T read_type;
+      
+      inline static bool type_matches(::lua::state s, int idx) {
+        return s.isstring(idx);
+      }
+    
+      inline static read_type get_unsafe(::lua::state s, int idx) {
+        return std::string(s.tostring(idx));
+      }
+
+      inline static read_type get(::lua::state s, int idx) {
+        if (type_matches(s, idx)) {
+          return get_unsafe(s, idx);
+        }
+      }
+
+      template <typename F>
+      inline static void apply(::lua::state s, int idx, F f) {
+        if (type_matches(s, idx)) {
+          f(s, idx);
+        }
+      }
+
+      inline static void set(::lua::state s, int idx, write_type value) {
+        s.pushstring(value.c_str());
+        if (idx != 0) s.replace(idx);
+      }
+    };
+  }
+
+  template <>
+  struct get_type_policy<char*> {
+    typedef type_policy::char_pointer<char*> value;
+  };
+
+  template <>
+  struct get_type_policy<const char*> {
+    typedef type_policy::char_pointer<const char*> value;
+  };
+
   
-  template <typename T>
-  struct type_adapter_pchar {
-    typedef type_adapter_pchar<T> type;
-    
-    inline static bool type_matches(const lua::state_base& s, int idx) {
-      return s.isstring(idx);
-    }
-
-    inline static const char* get_unsafe(const lua::state_base& s, int idx) {
-      return s.tostring(idx);
-    }
-    
-    inline static void push(const lua::state_base& s, T value) {
-      return s.pushstring(value);
-    }
+  template <>
+  struct get_type_policy<std::string> {
+    typedef type_policy::std_string<std::string> value;
   };
 
   template <>
-  struct type_adapter<char*> : public type_adapter_pchar<char*> {
+  struct get_type_policy<const std::string> {
+    typedef type_policy::std_string<const std::string> value;
   };
 
-  template <>
-  struct type_adapter<const char*> : public type_adapter_pchar<const char*> {
+  template <size_t N>
+  struct get_type_policy<char[N]> {
+    typedef type_policy::char_pointer<char*> value;
   };
 
-  template <>
-  struct type_adapter<char* const> : public type_adapter_pchar<char* const> {
+  template <size_t N>
+  struct get_type_policy<const char[N]> {
+    typedef type_policy::char_pointer<char*> value;
   };
 
-  template <>
-  struct type_adapter<const char* const> : public type_adapter_pchar<const char* const> {
+  template <size_t N>
+  struct get_type_policy<const char(&)[N]> {
+    typedef type_policy::char_pointer<const char*> value;
   };
-
-  template <>
-  struct type_adapter<const char* const&> : public type_adapter_pchar<const char* const&> {
-  };
-
-  template <size_t X>
-  struct type_adapter<char[X]> {
-    typedef char value_type[X];
-    typedef type_adapter<value_type> type;
     
-    inline static bool type_matches(const lua::state_base& s, int idx) {
-      return s.isstring(idx);
-    }
-
-    inline static const char* get_unsafe(const lua::state_base& s, int idx) {
-      return s.tostring(idx);
-    }
-    
-    inline static void push(const lua::state_base& s, value_type value) {
-      return s.pushstring(value);
-    }
-  };
-
-  template <size_t X>
-  struct type_adapter<const char[X]> {
-    typedef const char value_type[X];
-    typedef type_adapter<value_type> type;
-    
-    inline static bool type_matches(const lua::state_base& s, int idx) {
-      return s.isstring(idx);
-    }
-
-    inline static const char* get_unsafe(const lua::state_base& s, int idx) {
-      return s.tostring(idx);
-    }
-    
-    inline static void push(const lua::state_base& s, value_type value) {
-      return s.pushstring(value);
-    }
-  };
-
-  template <typename T>
-  struct type_adapter_std_string {
-    typedef type_adapter<T> type;
-
-    inline static bool type_matches(const lua::state_base& s, int idx) {
-      return s.isstring(idx);
-    }
-
-    inline static T get_unsafe(const lua::state_base& s, int idx) {
-      return std::string(s.tostring(idx));
-    }
-    
-    inline static void push(const lua::state_base& s, const std::string& value) {
-      return s.pushstring(value.c_str());
-    }
-  };
-
-  template <>
-  struct type_adapter<std::string> : public type_adapter_std_string<std::string> {
-  };
-
-  template <>
-  struct type_adapter<const std::string> : public type_adapter_std_string<const std::string> {
-  };
-
 }
+

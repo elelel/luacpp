@@ -3,17 +3,16 @@
 namespace lua {
   namespace type_policy {
     template <typename T>
-    struct boolean {
-      // Booleans are ints in Lua
-      typedef int write_type;
+    struct integral {
+      typedef T write_type;
       typedef T read_type;
       
       inline static bool type_matches(::lua::state s, int idx) {
-        return s.isboolean(idx);
+        return s.isnumber(idx);
       }
     
       inline static read_type get_unsafe(::lua::state s, int idx) {
-        return s.toboolean(idx);
+        return s.tonumber(idx);
       }
 
       inline static read_type get(::lua::state s, int idx) {
@@ -30,20 +29,31 @@ namespace lua {
       }
 
       inline static void set(::lua::state s, int idx, T value) {
-        s.pushboolean(write_type(value));
+        s.pushnumber(write_type(value));
         if (idx != 0) s.replace(idx);
       }
     };
-  
   }
   
   template <>
-  struct get_type_policy<bool> {
-    typedef type_policy::boolean<bool> value;
+  struct get_type_policy<int> {
+    typedef type_policy::integral<int> value;
   };
 
   template <>
-  struct get_type_policy<const bool> {
-    typedef type_policy::boolean<const bool> value;
+  struct get_type_policy<const int> {
+    typedef type_policy::integral<const int> value;
   };
+  
+  template <>
+  struct get_type_policy<unsigned int> {
+    typedef type_policy::integral<int> value;
+  };
+
+  template <>
+  struct get_type_policy<const unsigned int> {
+    typedef type_policy::integral<const int> value;
+  };
+  
 }
+
