@@ -41,28 +41,14 @@ namespace lua {
       at<T>(0) = value;
     }
 
-    template <typename return_tuple_t, typename args_tuple_t, typename result_callback_t>
-    inline void call_function(const char* name, const args_tuple_t& args,
-                              result_callback_t f) {
-      getglobal(name);
-      if (isfunction(-1)) {
-        push_tuple(args);
-        int rc = pcall(l_, std::tuple_size<args_tuple_t>::value,
-                       std::tuple_size<return_tuple_t>::value, 0);
-        if (rc == 0) {
-          auto rslt = get_values<return_tuple_t>();
-          f(rslt);
-          pop(std::tuple_size<return_tuple_t>::value);
-          return rslt;
-        } else {
-          throw std::runtime_error(std::string("call_function p_call failed: ") + name);
-        }
-      } else {
-        throw std::runtime_error(std::string(name) + " is not a function in Lua global list, can't pcall");
-      }
+    // Meta-functions to push onto stack
+    template <typename T, typename... Ts>
+    void push_variadic(const T& value, Ts... values) const {
+      push<T>(value);
     }
 
-    // Meta-functions to push onto stack
+    void push_variadic() {};
+    
     template <std::size_t I = 0, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
     inline push_tuple(const std::tuple<Tp...>& t) const {
@@ -101,6 +87,26 @@ namespace lua {
     tuple_t inline get_values(int idx = -1) const {
       return get_values_<0, tuple_t>(idx);
     }
+
+    
+    template <typename result_callback_t, typename... Args>
+    inline void call_and_apply(const char* name, result_callback_t f, const size_t return_stack_size, Args... args) {
+      getglobal(name);
+      if (isfunction(-1)) {
+        push_variadic(args...);
+        int rc = pcall(sizeof...(args), return_stack_size, 0);
+        if (rc == 0) {
+          f(*this);
+          pop(return_stack_size);
+        } else {
+          throw std::runtime_error(std::string("call_function p_call failed: ") + name);
+        }
+      } else {
+        throw std::runtime_error(std::string(name) + " is not a function in Lua global list, can't pcall");
+      }
+    }
+
+    
   };
 
   /* Generic stack entity.

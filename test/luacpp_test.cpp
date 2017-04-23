@@ -284,7 +284,7 @@ SCENARIO("Table test") {
   }
 }
 
-/*
+
 SCENARIO("pcall test") {
   GIVEN("Lua state") {
     lua::state s;
@@ -292,8 +292,6 @@ SCENARIO("pcall test") {
       s.push<>("Direct stack call");
       s.push<>("print");
       s.pcall(1, 1, 0);
-      //s.pcall<std::tuple<>>("print", std::make_tuple("Hello world"));
     }
   }
 }
-*/
