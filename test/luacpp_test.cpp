@@ -266,7 +266,6 @@ SCENARIO("Table test") {
               std::string actual_name = t.name.get();
               std::string actual_ticker = t.ticker.get();
               const char* actual_rating = t.rating.get();
-              //  const char* actual_1929 = t.integral_1929.get();
               double actual_price = t.price.get();
               // Test operator()() overlaods
               std::string actual_exchange_code = t.exchange_code();
@@ -276,18 +275,23 @@ SCENARIO("Table test") {
                 REQUIRE(actual_ticker == initial_ticker);
                 REQUIRE(strcmp(actual_rating, initial_rating) == 0);
                 REQUIRE(actual_price == initial_price);
-                // REQUIRE(strcmp(actual_1929, initial_1929) == 0);
                 REQUIRE(actual_exchange_code == initial_exchange_code);
               }
             }
             WHEN("Accessing another table within the table") {
-              t.table_like_myself().name.set("That is a name in inner table");
+              auto initial_name = "That is a name in inner table";
+              t.table_like_myself().name = initial_name;
+              auto actual_name = t.table_like_myself().name();
+              REQUIRE(actual_name == initial_name);
+              auto initial_price{765.32};
+              t.table_like_myself().price = initial_price;
+              auto actual_price = t.table_like_myself().price();
+              REQUIRE(actual_price == initial_price);
             }
           }
         }
       }
     }
-    
   }
 }
 

@@ -38,7 +38,11 @@ namespace lua {
       }
     
       inline static read_type get_unsafe(::lua::state s, int idx) {
-        return std::string(s.tostring(idx));
+        auto pchar = s.tostring(idx);
+        if (pchar == nullptr) {
+          throw std::runtime_error("Luacpp get unsafe std::string failed: can't construct the string from nullptr");
+        }
+        return std::string(pchar);
       }
 
       template <typename F>

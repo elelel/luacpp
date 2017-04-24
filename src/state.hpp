@@ -216,10 +216,7 @@ namespace lua {
       if (type_matches(args...)) {
         return get_unsafe(args...);
       } else {
-        std::string actual_type = s_.typename_lua(s_.type_lua(idx_));
-        std::string actual_content = s_.tostring(idx_);
-        throw std::runtime_error("Luacpp entity get: typecheck failed (Lua type at stack index " + std::to_string(idx_)
-                                 + " is " + actual_type + "; content as string: " + actual_content + ")");
+        throw std::runtime_error(make_typecheck_error_msg("entity get"));
       }
     }
 
@@ -228,10 +225,7 @@ namespace lua {
       if (type_matches(args...)) {
         return apply_unsafe(args...);
       } else {
-        std::string actual_type = s_.typename_lua(s_.type_lua(idx_));
-        std::string actual_content = s_.tostring(idx_);
-        throw std::runtime_error("Luacpp entity apply: typecheck failed (Lua type at stack index " + std::to_string(idx_)
-                                 + " is " + actual_type + "; content as string: " + actual_content + ")");
+        throw std::runtime_error(make_typecheck_error_msg("entity apply"));
       }
     }
     
@@ -247,6 +241,25 @@ namespace lua {
   protected:
     const lua::state s_;
     const int idx_{0};
+
+  private:
+    std::string make_typecheck_error_msg(const std::string& operation) const {
+      auto actual_type_pc = s_.typename_lua(s_.type_lua(idx_));
+      auto actual_content_pc = s_.tostring(idx_);
+      std::string actual_type;
+      std::string actual_content;
+      if (actual_type_pc == nullptr) 
+        actual_type = "<Oops, got null from Lua when tried to get actual type name string>";
+      else
+        actual_type = actual_type_pc;
+      if (actual_content_pc == nullptr) 
+        actual_content = "<Oops, got null from Lua when tried to get actual content as string>";
+      else
+        actual_content = actual_content_pc;
+        
+      return "Luacpp " + operation + ": typecheck failed (Lua type at stack index "
+        + std::to_string(idx_) + " is " + actual_type + "; content as string: " + actual_content + ")";
+    }
   };
   
 

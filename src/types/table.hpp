@@ -10,8 +10,11 @@ public:                                                 \
    s_(s),                                               \
    idx_(idx) {                                          \
    }                                                    \
-
-
+                                                        \
+ inline void create() const {                            \
+   s_.newtable();                                       \
+ }                                                      \
+ 
 #define LUACPP_TABLE_FIELD_STR_KEY(NAME, KEY_TYPE, VALUE_TYPE )         \
   struct NAME##_type_policy :                                           \
     public ::lua::detail::table_field_policy_base<KEY_TYPE, VALUE_TYPE> { \
@@ -44,10 +47,16 @@ public:                                                 \
     typedef TABLE_NAME read_type;                                       \
                                                                         \
     static inline bool type_matches(::lua::state s, int idx) {          \
-      return s.istable(idx);                                            \
+      /* It may be not created yet  */                                  \
+      return s.isnil(idx) || s.istable(idx);                            \
     }                                                                   \
                                                                         \
     static inline read_type get_unsafe(::lua::state s, int idx) {       \
+      if (s.isnil(idx)) {                                               \
+        /* Assume we are pointing at correct place to create the table */ \
+        s.newtable();                                                   \
+        s.replace(idx);                                                 \
+      }                                                                 \
       return read_type(s, idx);                                         \
     }                                                                   \
                                                                         \
