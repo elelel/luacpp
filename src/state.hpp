@@ -130,7 +130,7 @@ namespace lua {
           pop(correct_stack_size);
         } else {
           throw std::runtime_error(std::string("Luacpp call_and_apply error: call to ")
-                                   + name + " failed with error " + std::to_string(rc)));
+                                   + name + " failed with error " + std::to_string(rc));
         }
       } else {
         throw std::runtime_error(std::string("Luacpp call_and_apply error: ") + name
@@ -150,7 +150,7 @@ namespace lua {
           return rslt;
         } else {
           throw std::runtime_error(std::string("Luacpp call error: call to ")
-                                   + name + " failed with error " + std::to_string(rc)));
+                                   + name + " failed with error " + std::to_string(rc));
         }
       } else {
         throw std::runtime_error(std::string("Luacpp call error: ") + name
