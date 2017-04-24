@@ -115,15 +115,18 @@ namespace lua {
       return get_values_reverse_<0, tuple_t>(idx);
     }
 
-    template <typename result_callback_t, typename... Args>
-    inline void call_and_apply(const char* name, result_callback_t f, const size_t return_stack_size, Args... args) {
+    template <typename callback_t,
+              typename... Args>
+    inline void call_and_apply(callback_t f,
+                               const int n_result,
+                               const char* name, Args... args) {
       getglobal(name);
       if (isfunction(-1)) {
         push_variadic(args...);
-        int rc = pcall(sizeof...(args), return_stack_size, 0);
+        int rc = pcall(sizeof...(args), n_result, 0);
         if (rc == 0) {
-          f(*this);
-          pop(return_stack_size);
+          int correct_stack_size = f(*this);
+          pop(correct_stack_size);
         } else {
           throw std::runtime_error(std::string("call_function p_call failed: ") + name);
         }
@@ -131,7 +134,7 @@ namespace lua {
         throw std::runtime_error(std::string(name) + " is not a function in Lua global list, can't pcall");
       }
     }
-
+    
     template <typename return_tuple_t, typename... Args>
     inline return_tuple_t call(const char* name, Args... args) {
       getglobal(name);

@@ -287,13 +287,13 @@ SCENARIO("Table test") {
 static int test_c_function(lua_State* l) {
   lua::state s(l);
   const int n_args = s.gettop();
-  std::cout << " Total args : " << std::to_string(n_args) << "\n";
+  std::cout << "Entered test_c_function. Total args: " << std::to_string(n_args) << "\n";
   if (n_args == 2) {
-    std::cout << "Getting first "<< s.tostring(1) <<"\n";
+    std::cout << "Getting first argument, content of stack: "<< s.tostring(1) << "\n";
     // First argument has to be string
     auto str = s.at<std::string>(1).get();
     // Second argument has to be number
-    std::cout << "Getting second " << s.tostring(2)  << std::endl;
+    std::cout << "Getting second argument, content of stack: " << s.tostring(2) << "\n";
     auto num = s.at<int>(2).get();
 
     std::cout << "Popping\n";
@@ -318,12 +318,31 @@ SCENARIO("Functions test") {
     WHEN("register raw function") {
       s.register_lua("test_c_function", &test_c_function);
       typedef std::tuple<std::string, int> result_type;
-      THEN("Call and check results") {
+      THEN("Call, get and check results") {
         auto rslt = s.call<result_type>("test_c_function", std::string("Test"), 123);
         auto& actual_str = std::get<0>(rslt);
         auto& actual_num = std::get<1>(rslt);
         REQUIRE(actual_str == std::string("Test - length 4"));
         REQUIRE(actual_num == 127);
+      }
+      THEN("Call, apply lambda and check results") {
+        std::string actual_str;
+        int actual_num{0};
+        const int n_result = 2;
+        // Version with caller clean stack responsibility
+        auto callback = [&actual_str, &actual_num] (const lua::state& s) {
+          std::cout << "Getting first result, content of stack: "<< s.tostring(1) << "\n";
+          // First argument has to be string
+          auto actual_str = s.at<std::string>(1).get();
+          // Second argument has to be number
+          std::cout << "Getting second result, content of stack: " << s.tostring(2) << "\n";
+          auto actual_num = s.at<int>(0).get();
+
+          s.pop(n_result);
+          
+          return 0; // We've balanced the stack, so inform that there're 0 items are to be corrected
+        };
+        s.call_and_apply<>(callback, 2, "test_c_function", std::string("Test"), 123);
       }
     }
   }
