@@ -223,6 +223,20 @@ SCENARIO("Test basic type entities") {
   }
 }
 
+// Create table struct
+// Forward declaration for recursion field
+struct my_table;
+// Declare the struct called my_table
+LUACPP_STATIC_TABLE_BEGIN(my_table);
+LUACPP_TABLE_FIELD_STR_KEY(name, std::string, std::string);
+// LUACPP_TABLE_FIELD is an alias to LUACPP_TABLE_FIELD_STR_KEY with const char* key
+LUACPP_TABLE_FIELD(ticker, std::string);
+LUACPP_TABLE_FIELD_STR_KEY(rating, const char*, const char*);
+LUACPP_TABLE_FIELD_STR_KEY(price, std::string, double);
+LUACPP_TABLE_FIELD_STR_KEY(exchange_code, std::string, std::string);
+LUACPP_TABLE_FIELD(table_like_myself, my_table);
+LUACPP_STATIC_TABLE_END(my_table);
+
 SCENARIO("Table test") {
   GIVEN("Lua state and custom table class") {
     lua::state s;
@@ -232,15 +246,6 @@ SCENARIO("Table test") {
       THEN("It shoule be on stack as table") {
         REQUIRE(s.istable(-1));
         WHEN("Creating my_table struct and setting value") {
-          // Declare a local table struct called my_table
-          LUACPP_STATIC_TABLE_BEGIN(my_table);
-          LUACPP_TABLE_FIELD_STR_KEY(name, std::string, std::string);
-          // LUACPP_TABLE_FIELD is an alias to LUACPP_TABLE_FIELD_STR_KEY with const char* key
-          LUACPP_TABLE_FIELD(ticker, std::string);
-          LUACPP_TABLE_FIELD_STR_KEY(rating, const char*, const char*);
-          LUACPP_TABLE_FIELD_STR_KEY(price, std::string, double);
-          LUACPP_TABLE_FIELD_STR_KEY(exchange_code, std::string, std::string);
-          LUACPP_STATIC_TABLE_END();
           // Instantiate my_table
           my_table t(s, -1);
           WHEN("Setting table's fields") {
@@ -275,7 +280,9 @@ SCENARIO("Table test") {
                 REQUIRE(actual_exchange_code == initial_exchange_code);
               }
             }
-            
+            WHEN("Accessing another table within the table") {
+              t.table_like_myself().name.set("That is a name in inner table");
+            }
           }
         }
       }

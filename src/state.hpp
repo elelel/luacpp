@@ -249,5 +249,5 @@ namespace lua {
     const int idx_{0};
   };
   
-      
+
 }

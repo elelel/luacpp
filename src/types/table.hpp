@@ -35,10 +35,33 @@ public:                                                 \
   LUACPP_TABLE_FIELD_STR_KEY(NAME, const char*, VALUE_TYPE)     \
   
 
-#define LUACPP_STATIC_TABLE_END()               \
-  };                                            \
-  
-  
+#define LUACPP_STATIC_TABLE_END( TABLE_NAME )                           \
+  };                                                                    \
+  namespace lua {                                                       \
+  template <>                                                           \
+  struct type_policy<TABLE_NAME> {                                      \
+    typedef TABLE_NAME write_type;                                      \
+    typedef TABLE_NAME read_type;                                       \
+                                                                        \
+    static inline bool type_matches(::lua::state s, int idx) {          \
+      return s.istable(idx);                                            \
+    }                                                                   \
+                                                                        \
+    static inline read_type get_unsafe(::lua::state s, int idx) {       \
+      return read_type(s, idx);                                         \
+    }                                                                   \
+                                                                        \
+    template <typename F>                                               \
+    static inline void apply_unsafe(::lua::state s, int idx, F f) {     \
+      f(s, idx);                                                        \
+    }                                                                   \
+                                                                        \
+    static inline void set(::lua::state s, int idx, write_type value) { \
+      throw std::runtime_error(std::string("Luacpp table ") + #TABLE_NAME + " error: setting not implemented" ); \
+    }                                                                   \
+  };                                                                    \
+  }                                                                     \
+    
 namespace lua {
   namespace detail {
     
@@ -58,7 +81,7 @@ namespace lua {
         s.pop(1);
         return rslt;
       }
-      
+
       static inline void apply_unsafe(::lua::state s, int idx, std::function<void(const lua::state&, int)> f, key_t key) {
         s.push<>(key);
         s.gettable(idx - 1);
@@ -66,7 +89,7 @@ namespace lua {
         s.pop(1);
       }
 
-      static inline void set(::lua::state s, int idx, value_t value, key_t key)  {
+      static inline void set(::lua::state s, int idx, write_type value, key_t key)  {
         if (type_matches(s, idx)) {
           s.push<>(key);
           s.push<>(value);
