@@ -284,14 +284,47 @@ SCENARIO("Table test") {
   }
 }
 
+static int test_c_function(lua_State* l) {
+  lua::state s(l);
+  const int n_args = s.gettop();
+  std::cout << " Total args : " << std::to_string(n_args) << "\n";
+  if (n_args == 2) {
+    std::cout << "Getting first "<< s.tostring(1) <<"\n";
+    // First argument has to be string
+    auto str = s.at<std::string>(1).get();
+    // Second argument has to be number
+    std::cout << "Getting second " << s.tostring(2)  << std::endl;
+    auto num = s.at<int>(2).get();
 
-SCENARIO("pcall test") {
+    std::cout << "Popping\n";
+    s.pop(n_args);
+    std::cout << "Popped\n";
+
+    std::cout << "Placing results\n";
+    std::string rslt1 = str + " - length " + std::to_string(str.size());
+    s.push<>(rslt1);
+    int rslt2 = num + str.size();
+    s.push<>(rslt2);
+
+    return 2;
+  } else {
+    throw std::runtime_error("Test C function expects 2 arguments, but received " + std::to_string(n_args));
+  }
+}
+
+SCENARIO("Functions test") {
   GIVEN("Lua state") {
     lua::state s;
-    WHEN("call print") {
-      s.push<>("Direct stack call");
-      s.push<>("print");
-      s.pcall(1, 1, 0);
+    WHEN("register raw function") {
+      s.register_lua("test_c_function", &test_c_function);
+      typedef std::tuple<std::string, int> result_type;
+      THEN("Call and check results") {
+        auto rslt = s.call<result_type>("test_c_function", std::string("Test"), 123);
+        auto& actual_str = std::get<0>(rslt);
+        auto& actual_num = std::get<1>(rslt);
+        REQUIRE(actual_str == std::string("Test - length 4"));
+        REQUIRE(actual_num == 127);
+      }
     }
   }
 }

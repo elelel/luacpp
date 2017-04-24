@@ -86,6 +86,16 @@ namespace lua {
       return ::lua_typename(l_, tp);
     }
 
+    inline void register_lua(const char* name,
+                             lua_CFunction f) const {
+      // calling a macro
+      return lua_register(l_, name, f);
+    }
+
+    inline void pop() const {
+      pop(1);
+    }
+
 
     LUACPP_DETAIL_NATIVE_STATE_API2(void, pushnil)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, pushstring,
@@ -97,12 +107,16 @@ namespace lua {
     LUACPP_DETAIL_NATIVE_STATE_API6(void, pushcclosure,
                                     lua_CFunction, fn,
                                     int, n)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, pushcfunction,
+                                    lua_CFunction, fn)
 
+    LUACPP_DETAIL_NATIVE_STATE_API2(int, gettop)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, pop,
                                     const int, n)
-
     LUACPP_DETAIL_NATIVE_STATE_API4(void, replace,
                                     const int, n)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, setglobal,
+                                    const char*, name)
 
     LUACPP_DETAIL_NATIVE_STATE_API4(int, isnil,
                                     int, idx)
