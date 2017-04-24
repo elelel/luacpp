@@ -54,7 +54,7 @@ namespace lua {
       push<T>(value);
     }
 
-    void push_variadic() {};
+    void push_variadic() const {};
     
     template <std::size_t I = 0, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
@@ -201,7 +201,7 @@ namespace lua {
     }
 
     template <typename F, typename... Args>
-    inline void apply_unsafe(F f, Args&&... args) {
+    inline void apply_unsafe(F f, Args&&... args) const {
       policy_t::apply_unsafe(s_, idx_, f, args...);
     }
 
