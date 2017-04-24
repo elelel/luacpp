@@ -13,7 +13,7 @@ namespace lua {
   template <typename policy_t>
   struct entity;
   
-  //Type adapter, maps C++ type to corresponding entity type.
+  // Type adapter, maps C++ type to corresponding entity type.
   template <typename T>
   struct type_policy;
   
@@ -129,10 +129,12 @@ namespace lua {
           int correct_stack_size = f(*this);
           pop(correct_stack_size);
         } else {
-          throw std::runtime_error(std::string("call_function p_call failed: ") + name);
+          throw std::runtime_error(std::string("Luacpp call_and_apply error: call to ")
+                                   + name + " failed with error " + std::to_string(rc)));
         }
       } else {
-        throw std::runtime_error(std::string(name) + " is not a function name in Lua global list, can't pcall");
+        throw std::runtime_error(std::string("Luacpp call_and_apply error: ") + name
+                                 + " is not a function name in Lua global list, can't pcall");
       }
     }
     
@@ -147,10 +149,12 @@ namespace lua {
           pop(std::tuple_size<return_tuple_t>::value);
           return rslt;
         } else {
-          throw std::runtime_error(std::string("Luacpp: call ") + name + " failed, error " + std::to_string(rc));
+          throw std::runtime_error(std::string("Luacpp call error: call to ")
+                                   + name + " failed with error " + std::to_string(rc)));
         }
       } else {
-        throw std::runtime_error(std::string(name) + " is not a function name in Lua global list, can't pcall");
+        throw std::runtime_error(std::string("Luacpp call error: ") + name
+                                 + " is not a function name in Lua global list, can't pcall");
       }
     }
     
@@ -242,7 +246,7 @@ namespace lua {
     }
   protected:
     const lua::state s_;
-    const int idx_;
+    const int idx_{0};
   };
   
       
