@@ -223,19 +223,24 @@ SCENARIO("Test basic type entities") {
   }
 }
 
-// Create table struct
-// Forward declaration for recursion field
-struct my_table;
-// Declare the struct called my_table
-LUACPP_STATIC_TABLE_BEGIN(my_table);
-LUACPP_TABLE_FIELD_STR_KEY(name, std::string, std::string);
-// LUACPP_TABLE_FIELD is an alias to LUACPP_TABLE_FIELD_STR_KEY with const char* key
-LUACPP_TABLE_FIELD(ticker, std::string);
-LUACPP_TABLE_FIELD_STR_KEY(rating, const char*, const char*);
-LUACPP_TABLE_FIELD_STR_KEY(price, std::string, double);
-LUACPP_TABLE_FIELD_STR_KEY(exchange_code, std::string, std::string);
-LUACPP_TABLE_FIELD(table_like_myself, my_table);
-LUACPP_STATIC_TABLE_END(my_table);
+namespace bogus_namespace_to_test_macros {
+  // Create table struct
+  // Forward declaration for recursion field
+  struct my_table;
+  // Declare the struct called my_table
+  LUACPP_STATIC_TABLE_BEGIN(my_table);
+  LUACPP_TABLE_FIELD_STR_KEY(name, std::string, std::string);
+  // LUACPP_TABLE_FIELD is an alias to LUACPP_TABLE_FIELD_STR_KEY with const char* key
+  LUACPP_TABLE_FIELD(ticker, std::string);
+  LUACPP_TABLE_FIELD_STR_KEY(rating, const char*, const char*);
+  LUACPP_TABLE_FIELD_STR_KEY(price, std::string, double);
+  LUACPP_TABLE_FIELD_STR_KEY(exchange_code, std::string, std::string);
+  LUACPP_TABLE_FIELD(table_like_myself, my_table);
+  LUACPP_STATIC_TABLE_END();
+}
+
+// This HAS to be invoked from a .hpp root
+LUACPP_STATIC_TABLE_TYPE_POLICY(bogus_namespace_to_test_macros::my_table)
 
 SCENARIO("Table test") {
   GIVEN("Lua state and custom table class") {
@@ -247,7 +252,7 @@ SCENARIO("Table test") {
         REQUIRE(s.istable(-1));
         WHEN("Creating my_table struct and setting value") {
           // Instantiate my_table
-          my_table t(s, -1);
+          bogus_namespace_to_test_macros::my_table t(s, -1);
           WHEN("Setting table's fields") {
             const std::string initial_name = "Test stock exchange instrument";
             const std::string initial_ticker = "TICKR";
