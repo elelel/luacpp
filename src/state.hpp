@@ -238,6 +238,15 @@ namespace lua {
     inline void operator=(write_type value) const {
       set(value);
     }
+
+    // Accessors
+    const lua::state& lua_state() const {
+      return s_;
+    }
+
+    const int& index() const {
+      return idx_;
+    }
   protected:
     const lua::state s_;
     const int idx_{0};
