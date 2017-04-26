@@ -25,12 +25,12 @@ namespace lua {
   struct Apply {
     template<typename F, typename T, typename... A>
     static inline auto apply_tuple(F && f, T && t, A &&... a)
-      -> decltype(Apply<N-1>::apply(
+      -> decltype(Apply<N-1>::apply_tuple(
                                     ::std::forward<F>(f), ::std::forward<T>(t),
                                     ::std::get<N-1>(::std::forward<T>(t)), ::std::forward<A>(a)...
                                     ))
     {
-      return Apply<N-1>::apply(::std::forward<F>(f), ::std::forward<T>(t),
+      return Apply<N-1>::apply_tuple(::std::forward<F>(f), ::std::forward<T>(t),
                                ::std::get<N-1>(::std::forward<T>(t)), ::std::forward<A>(a)...
                                );
     }

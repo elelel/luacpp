@@ -109,12 +109,17 @@ namespace lua {
                                     int, n)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, pushcfunction,
                                     lua_CFunction, fn)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, pushlightuserdata,
+                                    void*, p)
 
     LUACPP_DETAIL_NATIVE_STATE_API2(int, gettop)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, pop,
                                     const int, n)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, replace,
                                     const int, n)
+    
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, getglobal,
+                                    const char*, name)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, setglobal,
                                     const char*, name)
 
@@ -130,6 +135,8 @@ namespace lua {
                                     int, idx)
     LUACPP_DETAIL_NATIVE_STATE_API4(int, isfunction,
                                     int, idx)
+    LUACPP_DETAIL_NATIVE_STATE_API4(int, islightuserdata,
+                                    int, idx)
     
     LUACPP_DETAIL_NATIVE_STATE_API4(lua_Number, tonumber,
                                     int, idx)
@@ -137,17 +144,9 @@ namespace lua {
                                     int, idx)
     LUACPP_DETAIL_NATIVE_STATE_API4(int, toboolean,
                                     int, idx)
-
-    LUACPP_DETAIL_NATIVE_STATE_API4(void, getglobal,
-                                    const char*, name)
-    LUACPP_DETAIL_NATIVE_STATE_API6(void, getfield,
-                                    int, idx,
-                                    const char*, key)
-    LUACPP_DETAIL_NATIVE_STATE_API6(void, setfield,
-                                    int, idx,
-                                    const char*, key)
-    LUACPP_DETAIL_NATIVE_STATE_API4(void, next,
+    LUACPP_DETAIL_NATIVE_STATE_API4(void*, topointer,
                                     int, idx)
+    
     LUACPP_DETAIL_NATIVE_STATE_API6(void, createtable,
                                     int, narr,
                                     int, nrec)
@@ -155,6 +154,24 @@ namespace lua {
     LUACPP_DETAIL_NATIVE_STATE_API4(void, settable,
                                     int, idx)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, gettable,
+                                    int, idx)
+    LUACPP_DETAIL_NATIVE_STATE_API6(void, getfield,
+                                    int, idx,
+                                    const char*, key)
+    LUACPP_DETAIL_NATIVE_STATE_API6(void, setfield,
+                                    int, idx,
+                                    const char*, key)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, rawget,
+                                    int, idx)
+    LUACPP_DETAIL_NATIVE_STATE_API6(void, rawgeti,
+                                    int, idx,
+                                    int, n)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, rawset,
+                                    int, idx)
+    LUACPP_DETAIL_NATIVE_STATE_API6(void, rawseti,
+                                    int, idx,
+                                    int, n)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, next,
                                     int, idx)
 
     LUACPP_DETAIL_NATIVE_STATE_API8(int, pcall,

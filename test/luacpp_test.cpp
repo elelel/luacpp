@@ -300,23 +300,17 @@ SCENARIO("Table test") {
   }
 }
 
+
+// Raw C function: takes a string and a number, returns modified string an modified number
 static int test_c_function(lua_State* l) {
   lua::state s(l);
   const int n_args = s.gettop();
-  std::cout << "Entered test_c_function. Total args: " << std::to_string(n_args) << "\n";
   if (n_args == 2) {
-    std::cout << "Getting first argument, content of stack: "<< s.tostring(1) << "\n";
     // First argument has to be string
     auto str = s.at<std::string>(1).get();
     // Second argument has to be number
-    std::cout << "Getting second argument, content of stack: " << s.tostring(2) << "\n";
     auto num = s.at<int>(2).get();
-
-    std::cout << "Popping\n";
     s.pop(n_args);
-    std::cout << "Popped\n";
-
-    std::cout << "Placing results\n";
     std::string rslt1 = str + " - length " + std::to_string(str.size());
     s.push<>(rslt1);
     int rslt2 = num + str.size();
@@ -328,12 +322,26 @@ static int test_c_function(lua_State* l) {
   }
 }
 
+// Same function at a higher level of abstraction
+static std::tuple<std::string, int> test_cpp_function(::lua::entity<::lua::type_policy<std::string>> s,
+                                               ::lua::entity<::lua::type_policy<int>> i) {
+  auto str = s();
+  auto num = i();
+  std::string rslt1 = str + " - length " + std::to_string(str.size());
+  int rslt2 = num + str.size();
+  return std::make_tuple(rslt1, rslt2);
+}
+
+// Declare test_cpp_function class in ::lua::function namespace
+LUACPP_STATIC_FUNCTION3(test_cpp_function, std::string, int)
+
 SCENARIO("Functions test") {
   GIVEN("Lua state") {
     lua::state s;
-    WHEN("register raw function") {
+    typedef std::tuple<std::string, int> result_type;
+    WHEN("Register raw c function") {
       s.register_lua("test_c_function", &test_c_function);
-      typedef std::tuple<std::string, int> result_type;
+
       THEN("Call, get and check results") {
         auto rslt = s.call<result_type>("test_c_function", std::string("Test"), 123);
         auto& actual_str = std::get<0>(rslt);
@@ -347,19 +355,42 @@ SCENARIO("Functions test") {
         const int n_result = 2;
         // Version with caller clean stack responsibility
         auto callback = [&actual_str, &actual_num] (const lua::state& s) {
-          std::cout << "Getting first result, content of stack: "<< s.tostring(1) << "\n";
           // First argument has to be string
           auto actual_str = s.at<std::string>(1).get();
           // Second argument has to be number
-          std::cout << "Getting second result, content of stack: " << s.tostring(2) << "\n";
           auto actual_num = s.at<int>(0).get();
-
           s.pop(n_result);
-          
           return 0; // We've balanced the stack, so inform that there're 0 items are to be corrected
         };
         s.call_and_apply<>(callback, 2, "test_c_function", std::string("Test"), 123);
       }
     }
+    WHEN("Register cpp function") {
+      ::lua::function::test_cpp_function().register_in_lua(s, test_cpp_function);
+      THEN("Address for the function stored in Lua should match the real one") {
+        s.getglobal(::lua::function::test_cpp_function().desc_table_name());
+        bool is_desc_table_nil = s.isnil(-1);
+        REQUIRE(!is_desc_table_nil);
+        bool is_desc_table_table = s.istable(-1);
+        REQUIRE(is_desc_table_table);
+        s.push<>("test_cpp_function");
+        s.gettable(-2);
+        bool is_pfun_lightuserdata = s.islightuserdata(-1);
+        REQUIRE(is_pfun_lightuserdata);
+        auto fd = (::lua::function::test_cpp_function_function_descriptor*)s.at<void*>(-1)();
+        //        REQUIRE(&test_cpp_function == fd->client_c_function);
+      }
+      THEN("Call the cpp function") {
+        auto rslt = s.call<result_type>("test_cpp_function", std::string("Test"), 123);
+        auto& actual_str = std::get<0>(rslt);
+        auto& actual_num = std::get<1>(rslt);
+        REQUIRE(actual_str == std::string("Test - length 4"));
+        REQUIRE(actual_num == 127);
+      }
+      THEN("Unregister function") {
+        ::lua::function::test_cpp_function().unregister_from_lua(s);
+      }
+    }
   }
+
 }

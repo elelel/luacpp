@@ -5,7 +5,7 @@ namespace lua {
     template <typename T>
     struct integral {
       typedef T write_type;
-      typedef T read_type;
+      typedef typename std::remove_reference<T>::type read_type;
       
       inline static bool type_matches(::lua::state s, int idx) {
         return s.isnumber(idx);
@@ -36,6 +36,10 @@ namespace lua {
   };
   
   template <>
+  struct type_policy<const int&> : public detail::integral<const int&> {
+  };
+  
+  template <>
   struct type_policy<unsigned int> : public detail::integral<unsigned int>  {
   };
 
@@ -43,5 +47,10 @@ namespace lua {
   struct type_policy<const unsigned int> : public detail::integral<const unsigned int>  {
   };
   
+  template <>
+  struct type_policy<size_t> : public detail::integral<size_t> {
+  };
+
+
 }
 

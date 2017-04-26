@@ -31,7 +31,7 @@ namespace lua {
     template <typename T>
     struct std_string {
       typedef T write_type;
-      typedef T read_type;
+      typedef typename std::remove_reference<T>::type read_type;
       
       inline static bool type_matches(::lua::state s, int idx) {
         return s.isstring(idx);
@@ -72,6 +72,10 @@ namespace lua {
 
   template <>
   struct type_policy<const std::string> : public detail::std_string<const std::string> {
+  };
+
+    template <>
+  struct type_policy<const std::string&> : public detail::std_string<const std::string&> {
   };
 
   template <size_t N>
