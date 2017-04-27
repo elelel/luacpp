@@ -322,6 +322,7 @@ static int test_c_function(lua_State* l) {
   }
 }
 
+namespace my_very_special_namespace {
 // Same function at a higher level of abstraction
 static std::tuple<std::string, int> test_cpp_function(::lua::state st,
                                                       ::lua::entity<::lua::type_policy<std::string>> s,
@@ -332,9 +333,13 @@ static std::tuple<std::string, int> test_cpp_function(::lua::state st,
   int rslt2 = num + str.size();
   return std::make_tuple(rslt1, rslt2);
 }
+}
 
 // Declare test_cpp_function class in ::lua::function namespace
-LUACPP_STATIC_FUNCTION3(test_cpp_function, std::string, int)
+LUACPP_STATIC_FUNCTION3(test_cpp_function,   // How the function will be called in Lua
+                        ::my_very_special_namespace::test_cpp_function,  // What function in C++ should handle the call
+                        std::string, int  // Arguments that the handler will received wrapped in Lua entities
+                        )
 
 SCENARIO("Functions test") {
   GIVEN("Lua state") {
@@ -367,6 +372,7 @@ SCENARIO("Functions test") {
       }
     }
     WHEN("Register cpp function") {
+      using namespace my_very_special_namespace;
       ::lua::function::test_cpp_function().register_in_lua(s, test_cpp_function);
       THEN("Address for the function stored in Lua should match the real one") {
         s.getglobal(::lua::function::test_cpp_function().desc_table_name());
