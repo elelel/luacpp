@@ -14,7 +14,7 @@
                                                                         
 #define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT2(NAME, HANDLER_NAME) \
   static int wrapper_c_function(lua_State* l) {                         \
-    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+    return base_type::wrapper_c_function<NAME##_function_descriptor     \
                                          >(l, #NAME);                   \
   }                                                                     \
 
