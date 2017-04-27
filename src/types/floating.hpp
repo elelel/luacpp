@@ -5,14 +5,14 @@ namespace lua {
     template <typename T>
     struct floating {
       typedef T write_type;
-      typedef std::remove_reference<T>::type read_type;
+      typedef typename std::remove_reference<T>::type read_type;
       
       inline static bool type_matches(::lua::state s, int idx) {
         return s.isnumber(idx);
       }
     
       inline static read_type get_unsafe(::lua::state s, int idx) {
-        return s.tonumber(idx);
+        return read_type(s.tonumber(idx));
       }
 
       template <typename F>
