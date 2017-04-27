@@ -323,7 +323,8 @@ static int test_c_function(lua_State* l) {
 }
 
 // Same function at a higher level of abstraction
-static std::tuple<std::string, int> test_cpp_function(::lua::entity<::lua::type_policy<std::string>> s,
+static std::tuple<std::string, int> test_cpp_function(::lua::state st,
+                                                      ::lua::entity<::lua::type_policy<std::string>> s,
                                                ::lua::entity<::lua::type_policy<int>> i) {
   auto str = s();
   auto num = i();
@@ -378,7 +379,6 @@ SCENARIO("Functions test") {
         bool is_pfun_lightuserdata = s.islightuserdata(-1);
         REQUIRE(is_pfun_lightuserdata);
         auto fd = (::lua::function::test_cpp_function_function_descriptor*)s.at<void*>(-1)();
-        //        REQUIRE(&test_cpp_function == fd->client_c_function);
       }
       THEN("Call the cpp function") {
         auto rslt = s.call<result_type>("test_cpp_function", std::string("Test"), 123);

@@ -1,39 +1,200 @@
 #pragma once
-  
-#define LUACPP_STATIC_FUNCTION3(NAME, ARG1_TYPE, ARG2_TYPE)             \
+
+#define LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                       \
   namespace lua {                                                       \
-    namespace function {                                                \
+  namespace function {                                                  \
                                                                         \
-      typedef decltype(NAME) NAME##_c_function_type;                    \
-      struct NAME##_function_descriptor :                               \
-        public detail::function_descriptor<decltype(NAME)> {};          \
+  typedef decltype(NAME) NAME##_c_function_type;                        \
+  struct NAME##_function_descriptor :                                   \
+    public detail::function_descriptor<decltype(NAME)> {};              \
                                                                         \
-                                                                        \
-      struct NAME : public detail::function_base<NAME##_c_function_type> { \
-        typedef NAME type;                                              \
-        typedef detail::function_base<NAME##_c_function_type> base_type; \
-                                                                        \
-        static int wrapper_c_function(lua_State* l) {                   \
-          return base_type::wrapper_c_function<NAME##_function_descriptor, \
-                                               entity<type_policy<ARG1_TYPE>>, \
-                                               entity<type_policy<ARG2_TYPE>>>(l, #NAME); \
-        }                                                               \
-                                                                        \
-        template <typename client_function_t>                           \
-        static void register_in_lua(const lua::state& s, client_function_t f) { \
-          auto std_f = detail::make_std_function<>(f);                  \
-          NAME##_function_descriptor::instance().client_c_function = std_f; \
-          base_type::register_in_lua<NAME##_function_descriptor>        \
-            (s, #NAME, &wrapper_c_function);                            \
-        }                                                               \
-                                                                        \
-        static void unregister_from_lua(const lua::state& s) {          \
-          base_type::unregister_from_lua(s, #NAME);                     \
-        }                                                               \
-      };                                                                \
-    }                                                                   \
+  struct NAME : public detail::function_base<NAME##_c_function_type> {  \
+    typedef NAME type;                                                  \
+    typedef detail::function_base<NAME##_c_function_type> base_type;    \
+                                                                        
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT2(NAME, ARG1_TYPE)   \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>> \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+  
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME,              \
+                                                     ARG1_TYPE,         \
+                                                     ARG2_TYPE)         \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>>, \
+                                         entity<type_policy<ARG2_TYPE>> \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+  
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT4(NAME,              \
+                                                     ARG1_TYPE,         \
+                                                     ARG2_TYPE,         \
+                                                     ARG3_TYPE)         \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>>, \
+                                         entity<type_policy<ARG2_TYPE>>, \
+                                         entity<type_policy<ARG3_TYPE>> \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+  
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT5(NAME,              \
+                                                     ARG1_TYPE,         \
+                                                     ARG2_TYPE,         \
+                                                     ARG3_TYPE,         \
+                                                     ARG4_TYPE)         \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>>, \
+                                         entity<type_policy<ARG2_TYPE>>, \
+                                         entity<type_policy<ARG3_TYPE>>, \
+                                         entity<type_policy<ARG4_TYPE>> \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+  
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT6(NAME,              \
+                                                     ARG1_TYPE,         \
+                                                     ARG2_TYPE,         \
+                                                     ARG3_TYPE,         \
+                                                     ARG4_TYPE,         \
+                                                     ARG5_TYPE)         \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>>, \
+                                         entity<type_policy<ARG2_TYPE>>, \
+                                         entity<type_policy<ARG3_TYPE>>, \
+                                         entity<type_policy<ARG4_TYPE>>, \
+                                         entity<type_policy<ARG5_TYPE>> \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+  
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT7(NAME,              \
+                                                     ARG1_TYPE,         \
+                                                     ARG2_TYPE,         \
+                                                     ARG3_TYPE,         \
+                                                     ARG4_TYPE,         \
+                                                     ARG5_TYPE,         \
+                                                     ARG6_TYPE)         \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>>, \
+                                         entity<type_policy<ARG2_TYPE>>, \
+                                         entity<type_policy<ARG3_TYPE>>, \
+                                         entity<type_policy<ARG4_TYPE>>, \
+                                         entity<type_policy<ARG5_TYPE>>, \
+                                         entity<type_policy<ARG6_TYPE>> \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+  
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT8(NAME,              \
+                                                     ARG1_TYPE,         \
+                                                     ARG2_TYPE,         \
+                                                     ARG3_TYPE,         \
+                                                     ARG4_TYPE,         \
+                                                     ARG5_TYPE,         \
+                                                     ARG6_TYPE,         \
+                                                     ARG7_TYPE)         \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>>, \
+                                         entity<type_policy<ARG2_TYPE>>, \
+                                         entity<type_policy<ARG3_TYPE>>, \
+                                         entity<type_policy<ARG4_TYPE>>, \
+                                         entity<type_policy<ARG5_TYPE>>, \
+                                         entity<type_policy<ARG6_TYPE>>, \
+                                         entity<type_policy<ARG7_TYPE>> \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+  
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT9(NAME,              \
+                                                     ARG1_TYPE,         \
+                                                     ARG2_TYPE,         \
+                                                     ARG3_TYPE,         \
+                                                     ARG4_TYPE,         \
+                                                     ARG5_TYPE,         \
+                                                     ARG6_TYPE,         \
+                                                     ARG7_TYPE,         \
+                                                     ARG8_TYPE)         \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>>, \
+                                         entity<type_policy<ARG2_TYPE>>, \
+                                         entity<type_policy<ARG3_TYPE>>, \
+                                         entity<type_policy<ARG4_TYPE>>, \
+                                         entity<type_policy<ARG5_TYPE>>, \
+                                         entity<type_policy<ARG6_TYPE>>, \
+                                         entity<type_policy<ARG7_TYPE>>, \
+                                         entity<type_policy<ARG8_TYPE>> \
+                                         >(l, #NAME);                   \
   }                                                                     \
 
+
+#define LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                         \
+                                                                        \
+  template <typename client_function_t>                                 \
+  static void register_in_lua(const lua::state& s, client_function_t f) { \
+    auto std_f = detail::make_std_function<>(f);                        \
+    NAME##_function_descriptor::instance().client_c_function = std_f;   \
+    base_type::register_in_lua<NAME##_function_descriptor>              \
+      (s, #NAME, &wrapper_c_function);                                  \
+  }                                                                     \
+                                                                        \
+  static void unregister_from_lua(const lua::state& s) {                \
+    base_type::unregister_from_lua(s, #NAME);                           \
+  }                                                                     \
+  };                                                                    \
+  }                                                                     \
+  }                                                                     \
+
+#define LUACPP_STATIC_FUNCTION2(NAME, ARG1_TYPE)                \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                     \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                       \
+
+#define LUACPP_STATIC_FUNCTION3(NAME, ARG1_TYPE, ARG2_TYPE)             \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                             \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE, ARG2_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
+
+#define LUACPP_STATIC_FUNCTION4(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE)  \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                             \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
+
+#define LUACPP_STATIC_FUNCTION5(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                             \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
+
+#define LUACPP_STATIC_FUNCTION6(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                             \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
+
+#define LUACPP_STATIC_FUNCTION7(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                             \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
+
+#define LUACPP_STATIC_FUNCTION8(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                             \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
+
+#define LUACPP_STATIC_FUNCTION9(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                             \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
+
+#define LUACPP_STATIC_FUNCTION10(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE, ARG9_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME)                             \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE, ARG9_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
+          
+          
 namespace lua {
   namespace function {
     namespace detail {
@@ -97,7 +258,8 @@ namespace lua {
                   const auto n_args_expected = sizeof...(Args);
                   if (n_args == n_args_expected) {
                     typedef std::tuple<Args...> args_tuple_type;
-                    auto args = make_args_from_stack<0, args_tuple_type>(s);
+                    auto args = std::tuple_cat(std::tuple<state>(s), 
+                                               make_args_from_stack<0, args_tuple_type>(s));
                     auto rslt = apply_tuple(fd->client_c_function, args);
                     s.pop(n_args_expected);
                     s.push_tuple(rslt);
