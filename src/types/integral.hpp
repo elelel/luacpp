@@ -12,7 +12,7 @@ namespace lua {
       }
     
       inline static read_type get_unsafe(::lua::state s, int idx) {
-        return s.tonumber(idx);
+        return read_type(s.tonumber(idx));
       }
 
       template <typename F>

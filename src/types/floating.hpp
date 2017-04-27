@@ -5,7 +5,7 @@ namespace lua {
     template <typename T>
     struct floating {
       typedef T write_type;
-      typedef T read_type;
+      typedef std::remove_reference<T>::type read_type;
       
       inline static bool type_matches(::lua::state s, int idx) {
         return s.isnumber(idx);
