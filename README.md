@@ -7,7 +7,7 @@ The main difference from other C++ wrapper libraries is that it's
 goal is to bring type-safety and interaction with third-party Lua
 APIs.
 
-The library was written for personal projects, so not all C interface
+The library was written for personal projects, so not all of C interface
 is wrapped. If you use it and find something missing, don't hesitate
 to open an issue.
 
@@ -23,7 +23,7 @@ See [tests](test/luacpp_test.cpp) for more thorough examples.
 For a project using this library see [qluacpp](https://github.com/elelel/qluacpp)
 and [qluacpp-tutorial](https://github.com/elelel/qluacpp-tutorial)
 
-### Basic operations ===
+### Basic operations ###
 
 ```c++
 
@@ -59,7 +59,6 @@ void main(int main(int argc, char *argv[]) {
 ### Declaring and using a static table ###
 
 At root namespace:
-
 
 ```c++
 #include <luacpp/luacpp>
