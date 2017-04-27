@@ -341,6 +341,12 @@ LUACPP_STATIC_FUNCTION4(test_cpp_function,   // How the function will be called 
                         std::string, int  // Arguments that the handler will received wrapped in Lua entities
                         )
 
+// For testing functions returning void
+static void my_void_function(::lua::state st) {
+  std::cout << "Void function called\n";
+}
+LUACPP_STATIC_FUNCTION2(my_void_function, my_void_function)
+
 SCENARIO("Functions test") {
   GIVEN("Lua state") {
     lua::state s;
@@ -396,6 +402,9 @@ SCENARIO("Functions test") {
       THEN("Unregister function") {
         ::lua::function::test_cpp_function().unregister_from_lua(s);
       }
+    }
+    WHEN("Testing function returning void") {
+      ::lua::function::my_void_function().register_in_lua(s, my_void_function);
     }
   }
 

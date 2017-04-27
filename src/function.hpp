@@ -266,7 +266,30 @@ namespace lua {
         function_descriptor() {};
       };
 
-      template <typename F>
+      // Calling functions not returning void
+      template <typename T>
+      struct apply {
+        template <typename function_t, typename args_tuple_t>
+        static int call(::lua::state s, function_t f, args_tuple_t a) {
+          auto rslt = apply_tuple(f, a);
+          s.pop(std::tuple_size<args_tuple_t>::value - 1); // State variable was in args, but is not on stack
+          s.push_tuple(rslt);
+          return std::tuple_size<decltype(rslt)>::value;
+        }
+      };
+
+      // Calling functions returning void
+      template <>
+      struct apply<void> {
+        template <typename function_t, typename args_tuple_t>
+        static int call(::lua::state s, function_t f, args_tuple_t a) {
+          apply_tuple(f, a);
+          s.pop(std::tuple_size<args_tuple_t>::value - 1); // State variable was in args, but is not on stack
+          return 0;
+        }
+      };
+      
+     template <typename F>
       struct function_base {
         typedef function_base<F> type;
         typedef F* f_type;
@@ -296,10 +319,10 @@ namespace lua {
                     typedef std::tuple<Args...> args_tuple_type;
                     auto args = std::tuple_cat(std::tuple<state>(s), 
                                                make_args_from_stack<0, args_tuple_type>(s));
-                    auto rslt = apply_tuple(fd->client_c_function, args);
-                    s.pop(n_args_expected);
-                    s.push_tuple(rslt);
-                    return std::tuple_size<typename type::result_tuple_type>::value;
+
+                               
+                    typedef decltype(apply_tuple(fd->client_c_function, args)) result_type;
+                    return apply<result_type>::call(s, fd->client_c_function, args);
                   } else {
                     throw std::runtime_error("Luaccpp function " + std::string(name) +
                                              " registered as taking " + std::to_string(n_args_expected) +
