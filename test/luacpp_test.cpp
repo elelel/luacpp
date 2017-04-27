@@ -336,7 +336,7 @@ static std::tuple<std::string, int> test_cpp_function(::lua::state st,
 }
 
 // Declare test_cpp_function class in ::lua::function namespace
-LUACPP_STATIC_FUNCTION3(test_cpp_function,   // How the function will be called in Lua
+LUACPP_STATIC_FUNCTION4(test_cpp_function,   // How the function will be called in Lua
                         ::my_very_special_namespace::test_cpp_function,  // What function in C++ should handle the call
                         std::string, int  // Arguments that the handler will received wrapped in Lua entities
                         )

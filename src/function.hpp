@@ -12,7 +12,13 @@
     typedef NAME type;                                                  \
     typedef detail::function_base<NAME##_c_function_type> base_type;    \
                                                                         
-#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT2(NAME, HANDLER_NAME,\
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT2(NAME, HANDLER_NAME) \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, \
                                                      ARG1_TYPE)         \
   static int wrapper_c_function(lua_State* l) {                         \
     return base_type::wrapper_c_function<NAME##_function_descriptor,    \
@@ -20,7 +26,7 @@
                                          >(l, #NAME);                   \
   }                                                                     \
   
-#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, \
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT4(NAME, HANDLER_NAME, \
                                                      ARG1_TYPE,         \
                                                      ARG2_TYPE)         \
   static int wrapper_c_function(lua_State* l) {                         \
@@ -30,7 +36,7 @@
                                          >(l, #NAME);                   \
   }                                                                     \
   
-#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT4(NAME, HANDLER_NAME, \
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT5(NAME, HANDLER_NAME, \
                                                      ARG1_TYPE,         \
                                                      ARG2_TYPE,         \
                                                      ARG3_TYPE)         \
@@ -42,7 +48,7 @@
                                          >(l, #NAME);                   \
   }                                                                     \
   
-#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT5(NAME, HANDLER_NAME, \
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT6(NAME, HANDLER_NAME, \
                                                      ARG1_TYPE,         \
                                                      ARG2_TYPE,         \
                                                      ARG3_TYPE,         \
@@ -56,7 +62,7 @@
                                          >(l, #NAME);                   \
   }                                                                     \
   
-#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT6(NAME, HANDLER_NAME, \
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT7(NAME, HANDLER_NAME, \
                                                      ARG1_TYPE,         \
                                                      ARG2_TYPE,         \
                                                      ARG3_TYPE,         \
@@ -72,7 +78,7 @@
                                          >(l, #NAME);                   \
   }                                                                     \
   
-#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT7(NAME, HANDLER_NAME, \
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT8(NAME, HANDLER_NAME, \
                                                      ARG1_TYPE,         \
                                                      ARG2_TYPE,         \
                                                      ARG3_TYPE,         \
@@ -90,7 +96,7 @@
                                          >(l, #NAME);                   \
   }                                                                     \
   
-#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT8(NAME, HANDLER_NAME, \
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT9(NAME, HANDLER_NAME, \
                                                      ARG1_TYPE,         \
                                                      ARG2_TYPE,         \
                                                      ARG3_TYPE,         \
@@ -110,7 +116,7 @@
                                          >(l, #NAME);                   \
   }                                                                     \
   
-#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT9(NAME,              \
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT10(NAME,              \
                                                      ARG1_TYPE,         \
                                                      ARG2_TYPE,         \
                                                      ARG3_TYPE,         \
@@ -129,6 +135,30 @@
                                          entity<type_policy<ARG6_TYPE>>, \
                                          entity<type_policy<ARG7_TYPE>>, \
                                          entity<type_policy<ARG8_TYPE>> \
+                                         >(l, #NAME);                   \
+  }                                                                     \
+  
+#define LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT11(NAME,              \
+                                                     ARG1_TYPE,         \
+                                                     ARG2_TYPE,         \
+                                                     ARG3_TYPE,         \
+                                                     ARG4_TYPE,         \
+                                                     ARG5_TYPE,         \
+                                                     ARG6_TYPE,         \
+                                                     ARG7_TYPE,         \
+                                                     ARG8_TYPE,         \
+                                                     ARG9_TYPE)         \
+  static int wrapper_c_function(lua_State* l) {                         \
+    return base_type::wrapper_c_function<NAME##_function_descriptor,    \
+                                         entity<type_policy<ARG1_TYPE>>, \
+                                         entity<type_policy<ARG2_TYPE>>, \
+                                         entity<type_policy<ARG3_TYPE>>, \
+                                         entity<type_policy<ARG4_TYPE>>, \
+                                         entity<type_policy<ARG5_TYPE>>, \
+                                         entity<type_policy<ARG6_TYPE>>, \
+                                         entity<type_policy<ARG7_TYPE>>, \
+                                         entity<type_policy<ARG8_TYPE>> \
+                                         entity<type_policy<ARG9_TYPE>> \
                                          >(l, #NAME);                   \
   }                                                                     \
 
@@ -150,49 +180,54 @@
   }                                                                     \
   }                                                                     \
 
-#define LUACPP_STATIC_FUNCTION2(NAME, HANDLER_NAME, ARG1_TYPE)                \
+#define LUACPP_STATIC_FUNCTION2(NAME, HANDLER_NAME)                \
+  LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                     \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT2(NAME, HANDLER_NAME) \
+  LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                       \
+
+#define LUACPP_STATIC_FUNCTION3(NAME, HANDLER_NAME, ARG1_TYPE)                \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                     \
   LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                       \
 
-#define LUACPP_STATIC_FUNCTION3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE)             \
+#define LUACPP_STATIC_FUNCTION4(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE)             \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                             \
-  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT4(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
 
-#define LUACPP_STATIC_FUNCTION4(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE)  \
+#define LUACPP_STATIC_FUNCTION5(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE)  \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                             \
-  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT5(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
 
-#define LUACPP_STATIC_FUNCTION5(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE) \
+#define LUACPP_STATIC_FUNCTION6(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                             \
-  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT6(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
 
-#define LUACPP_STATIC_FUNCTION6(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE) \
+#define LUACPP_STATIC_FUNCTION7(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                             \
-  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT7(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
 
-#define LUACPP_STATIC_FUNCTION7(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE) \
+#define LUACPP_STATIC_FUNCTION8(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                             \
-  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT8(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
 
-#define LUACPP_STATIC_FUNCTION8(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE) \
+#define LUACPP_STATIC_FUNCTION9(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                             \
-  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT9(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
 
-#define LUACPP_STATIC_FUNCTION9(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE) \
+#define LUACPP_STATIC_FUNCTION10(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                             \
-  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT10(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
 
-#define LUACPP_STATIC_FUNCTION10(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE, ARG9_TYPE) \
+#define LUACPP_STATIC_FUNCTION11(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE, ARG9_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_BEGIN(NAME, HANDLER_NAME)                             \
-  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT3(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE, ARG9_TYPE) \
+  LUACPP_DETAIL_STATIC_FUNCTION_ARG_DEPENDENT11(NAME, HANDLER_NAME, ARG1_TYPE, ARG2_TYPE, ARG3_TYPE, ARG4_TYPE, ARG5_TYPE, ARG6_TYPE, ARG7_TYPE, ARG8_TYPE, ARG9_TYPE) \
   LUACPP_DETAIL_STATIC_FUNCTION_END(NAME)                               \
           
           
