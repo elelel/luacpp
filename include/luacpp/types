@@ -1,9 +1,0 @@
-#pragma once
-
-// Default type policies
-#include "../../src/types/boolean.hpp"
-#include "../../src/types/integral.hpp"
-#include "../../src/types/floating.hpp"
-#include "../../src/types/string.hpp"
-#include "../../src/types/pointer.hpp"
-#include "../../src/types/table.hpp"

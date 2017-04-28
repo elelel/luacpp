@@ -134,7 +134,7 @@ auto rslt = s.call<result_type>("cpp_function", std::string("Test"), 123);
 
 One of the most important challenges when interfacing with Lua API exported by a third-party application
 is type safety. The main purpose of this library is to interface with Lua in a type-safe and type-extensible manner.
-The library is architectured as set of generic operations funnel data through [type adapters](src/types) .
+The library is architectured as set of generic operations funnel data through [type policies for adapter classes](src/type_policies) .
 These adapters define how the data is written, read, and checked for type compliance on Lua stack.
 You can write your own adapter by specializing lua::type_adapter class template, see [boolean specialization](src/types/boolean.hpp) for a simple example.
 

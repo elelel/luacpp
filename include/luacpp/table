@@ -1,3 +1,4 @@
 #pragma once
 
-#include "../../src/table.hpp"
+#include "../../src/type_policies/static_table_field.hpp"
+#include "../../src/static_table.hpp"

@@ -173,12 +173,24 @@ namespace lua {
                                     int, n)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, next,
                                     int, idx)
+#if (LUA_VERSION_NUM < 502)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, objlen,
+                                    int, idx)
+    void rawlen(int idx) const {
+      return objlen(idx);
+    }
+#else
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, rawlen,
+                                    int, idx)
+    void objlen(int idx) const {
+      return rawlen(idx);
+    }
+#endif
 
     LUACPP_DETAIL_NATIVE_STATE_API8(int, pcall,
                                     int, nargs,
                                     int, nresults,
                                     int, errfunc)
-
 
     protected:
     lua_State* l_;

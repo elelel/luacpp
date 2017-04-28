@@ -6,7 +6,7 @@ namespace lua {
     struct boolean {
       // Booleans are ints in Lua
       typedef int write_type;
-      typedef T read_type;
+      typedef typename std::remove_reference<T>::type read_type;
       
       inline static bool type_matches(::lua::state s, int idx) {
         return s.isboolean(idx);

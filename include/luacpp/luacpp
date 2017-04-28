@@ -1,5 +1,8 @@
 #pragma once
 #include "state"
-#include "types"
+#include "entity"
+#include "basic_types"
+#include "table"
+#include "vector"
 #include "function"
 
