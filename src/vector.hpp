@@ -94,6 +94,10 @@ vector - returns elements, has type_policy<vector>
     vector_element<T> at(const int i) const {
       return vector_element<T>(s_, idx_, i);
     }
+
+    vector_element<T> operator[](const int i) const {
+      return at(i);
+    }
     
     void balance_stack() {
       s_.pop(n_pop_);
