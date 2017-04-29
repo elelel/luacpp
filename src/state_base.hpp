@@ -174,15 +174,15 @@ namespace lua {
     LUACPP_DETAIL_NATIVE_STATE_API4(void, next,
                                     int, idx)
 #if (LUA_VERSION_NUM < 502)
-    LUACPP_DETAIL_NATIVE_STATE_API4(void, objlen,
+    LUACPP_DETAIL_NATIVE_STATE_API4(int, objlen,
                                     int, idx)
-    void rawlen(int idx) const {
+    int rawlen(int idx) const {
       return objlen(idx);
     }
 #else
-    LUACPP_DETAIL_NATIVE_STATE_API4(void, rawlen,
+    LUACPP_DETAIL_NATIVE_STATE_API4(int, rawlen,
                                     int, idx)
-    void objlen(int idx) const {
+    int objlen(int idx) const {
       return rawlen(idx);
     }
 #endif

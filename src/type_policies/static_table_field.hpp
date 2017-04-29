@@ -2,11 +2,10 @@
 
 namespace lua {
   namespace detail {
-    
     template <typename key_t, typename value_t>
     struct table_field_policy_base {
       typedef value_t write_type;
-      typedef value_t read_type;
+      typedef typename type_policy<value_t>::read_type read_type;
 
       static inline bool type_matches(::lua::state s, int idx) {
         return s.istable(idx); // Checks only for table type

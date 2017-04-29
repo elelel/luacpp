@@ -24,7 +24,7 @@ namespace lua {
 
       inline static void set(::lua::state s, int idx, T value) {
         s.pushstring(write_type(value));
-        if (idx != 0) s.replace(idx);
+        if (idx != 0) s.replace(idx - 1);
       }
     };
 
@@ -52,7 +52,7 @@ namespace lua {
 
       inline static void set(::lua::state s, int idx, write_type value) {
         s.pushstring(value.c_str());
-        if (idx != 0) s.replace(idx);
+        if (idx != 0) s.replace(idx - 1);
       }
     };
   }

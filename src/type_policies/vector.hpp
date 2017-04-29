@@ -39,7 +39,7 @@ namespace lua {
   template <typename T>
   struct type_policy<std::vector<T>> {
     typedef std::vector<T> write_type;
-    typedef entity<::lua::vector<T>> read_type;
+    typedef ::lua::vector<T> read_type;
 
     static inline bool type_matches(::lua::state s, int idx) {
       return s.istable(idx); 

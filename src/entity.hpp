@@ -65,9 +65,9 @@ namespace lua {
     }
 
     template <typename F, typename... Args>
-    inline read_type apply(F f, Args... args) const {
+    inline void apply(F f, Args... args) const {
       if (type_matches(args...)) {
-        return apply_unsafe(args...);
+        apply_unsafe(args...);
       } else {
         throw std::runtime_error(make_typecheck_error_msg("entity apply"));
       }

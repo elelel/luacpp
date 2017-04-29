@@ -223,10 +223,62 @@ SCENARIO("Test basic type entities") {
   }
 }
 
+
+SCENARIO("Vector test") {
+  GIVEN("Lua state") {
+    lua::state s;
+    WHEN("We have an empty new table") {
+      s.newtable();
+      THEN("Create vector abstraction from it") {
+        ::lua::vector<int> v(s, -1);
+        THEN("Push back a few things") {
+          v.push_back(123);
+          REQUIRE(v.size() == 1);
+          v.push_back(456);
+          REQUIRE(v.size() == 2);
+          v.push_back(789);
+          REQUIRE(v.size() == 3);
+          THEN("Check the values") {
+            REQUIRE(v.at(0).get() == 123);
+            REQUIRE(v[1]() == 456);
+            REQUIRE(v.at(2)() == 789);
+
+            WHEN("The values stored match the pushed") {
+              THEN("Remove the last element") {
+                v.pop();
+                REQUIRE(v.size() == 2);
+                v.pop();
+                REQUIRE(v.size() == 1);
+                v.pop();
+                REQUIRE(v.size() == 0);
+              }
+              THEN("Modify the values") {
+                v[0].set(0xABC);
+                v[1] = 0xDEF;
+                REQUIRE(v[0].get() == 0xABC);
+                REQUIRE(v[0]() == 0xABC);
+                REQUIRE(v[1].get() == 0xDEF);
+                REQUIRE(v[1]() == 0xDEF);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Create table structs
 namespace bogus_namespace_to_test_macros {
-  // Create table struct
-  // Forward declaration for recursion field
-  struct my_table;
+  LUACPP_STATIC_TABLE_BEGIN(inner_table);
+  LUACPP_TABLE_FIELD(name, std::string);
+  LUACPP_TABLE_FIELD(price, double);
+  LUACPP_STATIC_TABLE_END();
+}
+// This HAS to be invoked from a source root namespace
+LUACPP_STATIC_TABLE_TYPE_POLICY(bogus_namespace_to_test_macros::inner_table)
+
+namespace bogus_namespace_to_test_macros {
   // Declare the struct called my_table
   LUACPP_STATIC_TABLE_BEGIN(my_table);
   LUACPP_TABLE_FIELD_STR_KEY(name, std::string, std::string);
@@ -235,12 +287,13 @@ namespace bogus_namespace_to_test_macros {
   LUACPP_TABLE_FIELD_STR_KEY(rating, const char*, const char*);
   LUACPP_TABLE_FIELD_STR_KEY(price, std::string, double);
   LUACPP_TABLE_FIELD_STR_KEY(exchange_code, std::string, std::string);
-  LUACPP_TABLE_FIELD(table_like_myself, my_table);
+  //  LUACPP_TABLE_FIELD(ticks, std::vector<double>);
+  LUACPP_TABLE_FIELD(inner_table, inner_table);
   LUACPP_STATIC_TABLE_END();
 }
-
-// This HAS to be invoked from a .hpp root
+// This HAS to be invoked from a source root namespace
 LUACPP_STATIC_TABLE_TYPE_POLICY(bogus_namespace_to_test_macros::my_table)
+
 
 SCENARIO("Table test") {
   GIVEN("Lua state and custom table class") {
@@ -285,12 +338,12 @@ SCENARIO("Table test") {
             }
             WHEN("Accessing another table within the table") {
               auto initial_name = "That is a name in inner table";
-              t.table_like_myself().name = initial_name;
-              auto actual_name = t.table_like_myself().name();
+              t.inner_table().name = initial_name;
+              auto actual_name = t.inner_table().name();
               REQUIRE(actual_name == initial_name);
               auto initial_price{765.32};
-              t.table_like_myself().price = initial_price;
-              auto actual_price = t.table_like_myself().price();
+              t.inner_table().price = initial_price;
+              auto actual_price = t.inner_table().price();
               REQUIRE(actual_price == initial_price);
             }
           }
@@ -299,7 +352,6 @@ SCENARIO("Table test") {
     }
   }
 }
-
 
 // Raw C function: takes a string and a number, returns modified string an modified number
 static int test_c_function(lua_State* l) {

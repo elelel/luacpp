@@ -41,23 +41,31 @@ vector - returns elements, has type_policy<vector>
       std::swap(i_, other.i_);
     }
     
-    value_type get() {
+    value_type get() const {
       s_.rawgeti(idx_, i_);
-      auto rslt = entity<type_policy<value_type>>(s_, idx_)();
+      auto rslt = entity<type_policy<value_type>>(s_, -1)();
       s_.pop();
       return rslt;
     }
 
-    void set(value_type value) {
-      // Assume the table is on the top
-      s_.pushnil();
-      entity<type_policy<value_type>>(s_, idx_) = value;
-      s_.rawseti(idx_, i_);
+    value_type operator()() const {
+      return get();
     }
 
-    void remove() {
-      s_.pushnil();
-      s_.rawseti(idx_, i_);
+    template <typename F, typename... Args>
+    void apply(F f, Args... args) const {
+      s_.rawgeti(idx_, i_);
+      f(s_, -1);
+      s_.pop();
+    }
+
+    void set(value_type value) const {
+      s_.push<>(value);
+      s_.rawseti(-2 , i_);
+    }
+
+    void operator=(value_type value) const {
+      set(value);
     }
 
     void operator=(value_type value) {
@@ -67,14 +75,14 @@ vector - returns elements, has type_policy<vector>
   private:
     const lua::state s_;
     const int idx_{0};
-    const int i_;
+    const int i_;  // Index in vector in oligophrenic format
   };
-  
-  
+
   template <typename T>
   struct vector {
     typedef vector<T> type;
-    typedef vector_element<T> value_type;
+    typedef T value_type;
+    typedef vector_element<T> element_type;
         
     vector(const lua::state& s, const int idx) :
       s_(s),
@@ -91,12 +99,25 @@ vector - returns elements, has type_policy<vector>
       return s_.objlen(idx_);
     }
 
-    vector_element<T> at(const int i) const {
-      return vector_element<T>(s_, idx_, i);
+    element_type at(const int i) const {
+      return element_type(s_, idx_, i + 1);
     }
 
-    vector_element<T> operator[](const int i) const {
+    element_type operator[](const int i) const {
       return at(i);
+    }
+
+    void push_back(const value_type& value) const {
+      int i = s_.objlen(idx_);
+      i += 1; // Adjust for oligophrenic indexing
+      s_.push<>(value);
+      s_.rawseti(idx_ - 1, i);
+    }
+
+    void pop() const {
+      int i = s_.objlen(idx_);
+      s_.pushnil();
+      s_.rawseti(idx_ - 1, i);
     }
     
     void balance_stack() {

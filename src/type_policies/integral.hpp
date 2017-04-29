@@ -22,7 +22,7 @@ namespace lua {
 
       inline static void set(::lua::state s, int idx, T value) {
         s.pushnumber(write_type(value));
-        if (idx != 0) s.replace(idx);
+        if (idx != 0) s.replace(idx - 1);
       }
     };
   }
