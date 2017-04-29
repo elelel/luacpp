@@ -30,19 +30,18 @@ namespace lua {
         s.push<>(value);
         s.settable(idx - 2);
       } else {
-        throw std::runtime_error("Can't create table field from non-table lua variable in stack");
+        throw std::runtime_error("Luacpp: Can't create table field from non-table lua variable in stack");
       }
     }
   };
 
-
   template <typename T>
-  struct type_policy<std::vector<T>> {
-    typedef std::vector<T> write_type;
+  struct type_policy<std::vector<T, std::allocator<T>>> {
+    typedef std::vector<T, std::allocator<T>> write_type;
     typedef ::lua::vector<T> read_type;
 
     static inline bool type_matches(::lua::state s, int idx) {
-      return s.istable(idx); 
+      return s.isnil(idx) || s.istable(idx); 
     }
       
     static inline read_type get_unsafe(::lua::state s, int idx) {
@@ -54,21 +53,29 @@ namespace lua {
     }
 
     static inline void set(::lua::state s, int idx, const write_type& value) {
-      if (type_matches(s, idx)) {
-        ::lua::vector<T> lv(s, idx);
-        for (size_t i = 0; i < value.size(); ++i) {
-          lv.at(i).set(value[i]);
-        }
+      throw std::runtime_error("Luacpp: setting vectors is not implemented");
+    }
+  };
 
-        const auto sz = lv.size();
-        if (sz > value.size()) {
-          for (int i = value.size(); i < lv.size(); ++i) {
-            lv.at(i).remove();
-          }; 
-        }
-      } else {
-        throw std::runtime_error("Luacpp: Can't assign vector to a non-table lua variable in stack");
-      }
+  template <typename T>
+  struct type_policy<::lua::vector<T>> {
+    typedef ::lua::vector<T> write_type;
+    typedef ::lua::vector<T> read_type;
+
+    static inline bool type_matches(::lua::state s, int idx) {
+      return s.isnil(idx) || s.istable(idx); 
+    }
+      
+    static inline read_type get_unsafe(::lua::state s, int idx) {
+      return read_type(s, idx);
+    }
+
+    static inline void apply_unsafe(::lua::state s, int idx, std::function<void(const lua::state&, int)> f, key_t key) {
+      f(s, idx);
+    }
+
+    static inline void set(::lua::state s, int idx, write_type value, key_t key)  {
+      throw std::runtime_error("Luacpp: etting lua vectors is not implemented");
     }
   };
   

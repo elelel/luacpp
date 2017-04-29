@@ -287,7 +287,7 @@ namespace bogus_namespace_to_test_macros {
   LUACPP_TABLE_FIELD_STR_KEY(rating, const char*, const char*);
   LUACPP_TABLE_FIELD_STR_KEY(price, std::string, double);
   LUACPP_TABLE_FIELD_STR_KEY(exchange_code, std::string, std::string);
-  //  LUACPP_TABLE_FIELD(ticks, std::vector<double>);
+  LUACPP_TABLE_FIELD(ticks, std::vector<double>);
   LUACPP_TABLE_FIELD(inner_table, inner_table);
   LUACPP_STATIC_TABLE_END();
 }
@@ -336,7 +336,7 @@ SCENARIO("Table test") {
                 REQUIRE(actual_exchange_code == initial_exchange_code);
               }
             }
-            WHEN("Accessing another table within the table") {
+            THEN("Accessing another table within the table") {
               auto initial_name = "That is a name in inner table";
               t.inner_table().name = initial_name;
               auto actual_name = t.inner_table().name();
@@ -345,6 +345,12 @@ SCENARIO("Table test") {
               t.inner_table().price = initial_price;
               auto actual_price = t.inner_table().price();
               REQUIRE(actual_price == initial_price);
+            }
+            THEN("Accessing vector field") {
+              t.ticks().push_back(1);
+              t.ticks().push_back(2);
+              t.ticks().push_back(3);
+              REQUIRE(t.ticks()[0].get() == 1);
             }
           }
         }

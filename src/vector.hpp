@@ -87,8 +87,12 @@ vector - returns elements, has type_policy<vector>
     vector(const lua::state& s, const int idx) :
       s_(s),
       idx_(idx) {
-      if (!s_.istable(idx_))
-        throw std::runtime_error("Luacpp error: can't construct lua vector from non-table stack value");
+      if (s_.isnil(idx)) {
+        s_.newtable();
+        s_.replace(idx - 1);
+      } else {
+        if (!s_.istable(idx_)) throw std::runtime_error("Luacpp error: can't construct lua vector from non-table stack value");
+      }
     }
 
     ~vector() {
