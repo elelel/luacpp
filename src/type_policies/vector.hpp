@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 namespace lua {
   template <typename T>
   struct type_policy<vector_element<T>> {
@@ -70,11 +72,11 @@ namespace lua {
       return read_type(s, idx);
     }
 
-    static inline void apply_unsafe(::lua::state s, int idx, std::function<void(const lua::state&, int)> f, key_t key) {
+    static inline void apply_unsafe(::lua::state s, int idx, std::function<void(const lua::state&, int)> f) {
       f(s, idx);
     }
 
-    static inline void set(::lua::state s, int idx, write_type value, key_t key)  {
+    static inline void set(::lua::state s, int idx, write_type value)  {
       throw std::runtime_error("Luacpp: etting lua vectors is not implemented");
     }
   };

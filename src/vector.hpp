@@ -1,14 +1,6 @@
 #pragma once
 
 namespace lua {
-
-  /*
-
-vector element - type_policy<vector_element>, reading: entity<T>, writing T, keeps i in state
-vector - returns elements, has type_policy<vector>
-
-   */
-
  
   template <typename T>
   struct vector_element {
@@ -134,9 +126,4 @@ vector - returns elements, has type_policy<vector>
 
     mutable int n_pop_{0};
   };
-  
-
-
-    
-  
 }
