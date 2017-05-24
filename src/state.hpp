@@ -111,10 +111,10 @@ namespace lua {
               typename... Args>
     inline void call_and_apply(callback_t f,
                                const int n_result,
-                               const char* name, Args... args) const {
+                               const char* name, Args&&... args) const {
       getglobal(name);
       if (isfunction(-1)) {
-        push_variadic(args...);
+        push_variadic(std::forward<Args>(args)...);
         int rc = pcall(sizeof...(args), n_result, 0);
         if (rc == 0) {
           int correct_stack_size = f(*this);
@@ -130,10 +130,10 @@ namespace lua {
     }
     
     template <typename return_tuple_t, typename... Args>
-    inline return_tuple_t call(const char* name, Args... args) const {
+    inline return_tuple_t call(const char* name, Args&&... args) const {
       getglobal(name);
       if (isfunction(-1)) {
-        push_variadic(args...);
+        push_variadic(std::forward<Args>(args)...);
         int rc = pcall(sizeof...(args), std::tuple_size<return_tuple_t>::value, 0);
         if (rc == 0) {
           auto rslt = get_values_reverse<return_tuple_t>();
@@ -148,7 +148,26 @@ namespace lua {
                                  + " is not a function name in Lua global list, can't pcall");
       }
     }
-    
+
+    template <typename... Args>
+    inline int call_with_results_on_stack(const char* name, const int& result_sz,
+                                                     Args&&... args) const {
+      getglobal(name);
+      if (isfunction(-1)) {
+        push_variadic(std::forward<Args>(args)...);
+        int rc = pcall(sizeof...(args), result_sz, 0);
+        if (rc == 0) {
+          return result_sz;
+        } else {
+          throw std::runtime_error(std::string("Luacpp call error: call to ")
+                                   + name + " failed with error " + std::to_string(rc));
+        }
+      } else {
+        throw std::runtime_error(std::string("Luacpp call error: ") + name
+                                 + " is not a function name in Lua global list, can't pcall");
+      }
+    }
+
   };
   
 
