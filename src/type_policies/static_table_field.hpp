@@ -16,7 +16,7 @@ namespace lua {
         s.push<>(key);
         if (idx <= 0) table_idx = idx - 1;
         s.gettable(table_idx);
-        auto rslt = entity<type_policy<read_type>>(s, idx).get();
+        auto rslt = entity<type_policy<read_type>>(s, -1).get();
         s.pop(1);
         return rslt;
       }
