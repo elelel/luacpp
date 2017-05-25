@@ -12,25 +12,31 @@ namespace lua {
       }
       
       static inline read_type get_unsafe(::lua::state s, int idx, key_t key) {
+        int table_idx = idx;
         s.push<>(key);
-        s.gettable(idx - 1);
+        if (idx <= 0) table_idx = idx - 1;
+        s.gettable(table_idx);
         auto rslt = entity<type_policy<read_type>>(s, idx).get();
         s.pop(1);
         return rslt;
       }
 
       static inline void apply_unsafe(::lua::state s, int idx, std::function<void(const lua::state&, int)> f, key_t key) {
+        int table_idx = idx;
         s.push<>(key);
-        s.gettable(idx - 1);
+        if (idx <= 0) table_idx = idx - 1;
+        s.gettable(table_idx);
         f(s, idx);
         s.pop(1);
       }
 
       static inline void set(::lua::state s, int idx, write_type value, key_t key)  {
         if (type_matches(s, idx)) {
+          int table_idx = idx;
           s.push<>(key);
           s.push<>(value);
-          s.settable(idx - 2);
+          if (idx <= 0) table_idx = idx - 2;
+          s.settable(table_idx);
         } else {
           throw std::runtime_error("Can't create table field from non-table lua variable in stack");
         }
