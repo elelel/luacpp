@@ -14,18 +14,21 @@ namespace lua {
       static inline read_type get_unsafe(::lua::state s, int idx, key_t key) {
         int table_idx = idx;
         s.push<>(key);
-        if (idx <= 0) table_idx = idx - 1;
-        s.gettable(table_idx);
+        if (idx <= 0)
+          s.gettable(idx - 1);
+        else
+          s.gettable(idx);
         auto rslt = entity<type_policy<read_type>>(s, -1).get();
         s.pop(1);
         return rslt;
       }
 
       static inline void apply_unsafe(::lua::state s, int idx, std::function<void(const lua::state&, int)> f, key_t key) {
-        int table_idx = idx;
         s.push<>(key);
-        if (idx <= 0) table_idx = idx - 1;
-        s.gettable(table_idx);
+        if (idx <= 0)
+          s.gettable(idx - 1);
+        else
+          s.gettable(idx);
         f(s, idx);
         s.pop(1);
       }
@@ -35,8 +38,8 @@ namespace lua {
           int table_idx = idx;
           s.push<>(key);
           s.push<>(value);
-          if (idx <= 0) table_idx = idx - 2;
-          s.settable(table_idx);
+          if (idx <= 0) s.settable(idx - 2);
+          else s.settable(idx);
         } else {
           throw std::runtime_error("Can't create table field from non-table lua variable in stack");
         }
