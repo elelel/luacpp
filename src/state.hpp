@@ -148,7 +148,7 @@ namespace lua {
                                  + " is not a function name in Lua global list, can't pcall");
       }
     }
-
+    
     template <typename... Args>
     inline int call_with_results_on_stack(const char* name, const int& result_sz,
                                                      Args&&... args) const {

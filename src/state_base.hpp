@@ -137,6 +137,10 @@ namespace lua {
                                     int, idx)
     LUACPP_DETAIL_NATIVE_STATE_API4(int, islightuserdata,
                                     int, idx)
+    LUACPP_DETAIL_NATIVE_STATE_API4(int, isthread,
+                                    int, idx)
+    LUACPP_DETAIL_NATIVE_STATE_API4(int, iscfunction,
+                                    int, idx)
     
     LUACPP_DETAIL_NATIVE_STATE_API4(lua_Number, tonumber,
                                     int, idx)

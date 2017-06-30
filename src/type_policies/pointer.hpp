@@ -9,7 +9,7 @@ namespace lua {
       typedef typename std::remove_reference<T>::type read_type;
       
       inline static bool type_matches(::lua::state s, int idx) {
-        return s.islightuserdata(idx);
+        return s.islightuserdata(idx) || s.isfunction(idx) || s.iscfunction(idx) || s.isthread();
       }
     
       inline static read_type get_unsafe(::lua::state s, int idx) {
@@ -22,6 +22,7 @@ namespace lua {
       }
 
       inline static void set(::lua::state s, int idx, T value) {
+        // Writes void always as light user data
         s.pushlightuserdata(write_type(value));
         if (idx != 0) s.replace(idx);
       }
