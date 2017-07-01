@@ -58,8 +58,9 @@ namespace lua {
       set(value);
     }
 
-    friend tempalte <typename T>
-    void swap(vector_element<T>& lhs, vector_element<T>& other);
+    template <typename X>
+    friend 
+    void swap(vector_element<X>& lhs, vector_element<X>& other);
 
   private:
     const lua::state s_;
@@ -67,8 +68,8 @@ namespace lua {
     const int i_;  // Index in vector in oligophrenic format
   };
 
-  tempalte <typename T>
-  void swap(vector_element<T>& lhs, vector_element<T>& other) {
+  template <typename X>
+  void swap(vector_element<X>& lhs, vector_element<X>& rhs) {
     std::swap(lhs.s_, rhs.s_);
     std::swap(lhs.idx_, rhs.idx_);
     std::swap(lhs.i_, rhs.i_);
