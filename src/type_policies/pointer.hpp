@@ -9,7 +9,7 @@ namespace lua {
       typedef typename std::remove_reference<T>::type read_type;
       
       inline static bool type_matches(::lua::state s, int idx) {
-        return s.islightuserdata(idx) || s.isfunction(idx) || s.iscfunction(idx) || s.isthread();
+        return s.islightuserdata(idx) || s.isfunction(idx) || s.iscfunction(idx) || s.isthread(idx);
       }
     
       inline static read_type get_unsafe(::lua::state s, int idx) {

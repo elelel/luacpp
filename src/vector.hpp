@@ -27,12 +27,6 @@ namespace lua {
       i_(other.i_) {
     }
 
-    void swap(type& other) {
-      std::swap(s_, other.s_);
-      std::swap(idx_, other.idx_);
-      std::swap(i_, other.i_);
-    }
-    
     value_type get() const {
       s_.rawgeti(idx_, i_);
       auto rslt = entity<type_policy<value_type>>(s_, -1)();
@@ -64,11 +58,21 @@ namespace lua {
       set(value);
     }
 
+    friend tempalte <typename T>
+    void swap(vector_element<T>& lhs, vector_element<T>& other);
+
   private:
     const lua::state s_;
     const int idx_{0};
     const int i_;  // Index in vector in oligophrenic format
   };
+
+  tempalte <typename T>
+  void swap(vector_element<T>& lhs, vector_element<T>& other) {
+    std::swap(lhs.s_, rhs.s_);
+    std::swap(lhs.idx_, rhs.idx_);
+    std::swap(lhs.i_, rhs.i_);
+  }
 
   template <typename T>
   struct vector {
