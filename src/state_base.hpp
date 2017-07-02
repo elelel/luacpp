@@ -111,6 +111,10 @@ namespace lua {
                                     lua_CFunction, fn)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, pushlightuserdata,
                                     void*, p)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, pushvalue,
+                                    int, idx)
+    LUACPP_DETAIL_NATIVE_STATE_API4(void, insert,
+                                    int, idx)
 
     LUACPP_DETAIL_NATIVE_STATE_API2(int, gettop)
     LUACPP_DETAIL_NATIVE_STATE_API4(void, pop,
@@ -175,7 +179,7 @@ namespace lua {
     LUACPP_DETAIL_NATIVE_STATE_API6(void, rawseti,
                                     int, idx,
                                     int, n)
-    LUACPP_DETAIL_NATIVE_STATE_API4(void, next,
+    LUACPP_DETAIL_NATIVE_STATE_API4(int, next,
                                     int, idx)
 #if (LUA_VERSION_NUM < 502)
     LUACPP_DETAIL_NATIVE_STATE_API4(int, objlen,
