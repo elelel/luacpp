@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <tuple>
+#include <iostream>
 
 #include "state_base.hpp"
 
@@ -86,24 +87,24 @@ namespace lua {
       return get_values_<0, tuple_t>(idx);
     }    
 
-    template <std::size_t I = 0, typename tuple_t>
+    template <typename tuple_t, std::size_t I = std::tuple_size<tuple_t>::value>
     typename std::enable_if<0 == std::tuple_size<tuple_t>::value, tuple_t>::type
     inline get_values_reverse_(int idx = -1) const {
       return std::tuple<>();
     }
 
-    template <std::size_t I = 0, typename tuple_t>
+    template <typename tuple_t, std::size_t I = std::tuple_size<tuple_t>::value>
     typename std::enable_if<0 != std::tuple_size<tuple_t>::value, tuple_t>::type
     inline get_values_reverse_(int idx = -1) const {
       typedef typename std::tuple_element<0, tuple_t>::type A;
-      A value = at<A>(idx - (std::tuple_size<tuple_t>::value - I -1)).get();
-      return std::tuple_cat(std::tuple<A>(value), get_values_reverse_<I + 1,
-                            typename tuple_tail_type<tuple_t>::type>(idx));
+      A value = at<A>(idx - I + 1).get();
+      return std::tuple_cat(std::tuple<A>(value), get_values_reverse_<
+                            typename tuple_tail_type<tuple_t>::type, I - 1>(idx));
     }
     
     template <typename tuple_t>
     tuple_t inline get_values_reverse(int idx = -1) const {
-      return get_values_reverse_<0, tuple_t>(idx);
+      return get_values_reverse_<tuple_t>(idx);
     }
 
     // Call functions
