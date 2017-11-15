@@ -24,8 +24,8 @@ namespace lua {
 
   template <typename policy_t>
   struct entity {
-    typedef typename policy_t::read_type read_type;
-    typedef typename policy_t::write_type write_type;
+    using read_type = typename policy_t::read_type;
+    using write_type = typename policy_t::write_type;
 
     entity(const ::lua::state& s, const int idx) :
       s_(s),

@@ -35,4 +35,8 @@ namespace lua {
   template <>
   struct type_policy<const bool> : public detail::boolean<const bool> {
   };
+
+  template <>
+  struct type_policy<const bool&> : public detail::boolean<const bool&> {
+  };
 }

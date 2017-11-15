@@ -25,7 +25,7 @@ namespace lua {
     }
 
     template <typename T>
-    auto at(int idx) const -> entity<type_policy<T>> {
+    auto at(const int idx) const -> entity<type_policy<T>> {
       return entity<type_policy<T>>(*this, idx);
     }
     
