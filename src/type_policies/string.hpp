@@ -74,7 +74,7 @@ namespace lua {
   struct type_policy<const std::string> : public detail::std_string<const std::string> {
   };
 
-    template <>
+  template <>
   struct type_policy<const std::string&> : public detail::std_string<const std::string&> {
   };
 

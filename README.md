@@ -2,7 +2,7 @@
 
 ## Overview ##
 
-LuaCpp is (yet another) C++11 header-only Lua interface library. 
+LuaCpp is (yet another) C++17 header-only Lua interface library. 
 The main difference from other C++ wrapper libraries is that it's
 goal is to bring type-safety and interaction with third-party Lua
 APIs.

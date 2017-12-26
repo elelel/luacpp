@@ -47,5 +47,9 @@ namespace lua {
   struct type_policy<const unsigned int> : public detail::integral<const unsigned int>  {
   };
   
+  template <>
+  struct type_policy<const unsigned int&> : public detail::integral<const unsigned int&>  {
+  };
+  
 }
 
