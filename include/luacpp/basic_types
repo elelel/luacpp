@@ -8,4 +8,5 @@
 #include "../../src/type_policies/pointer.hpp"
 
 #include "../../src/type_policies/optional_integral.hpp"
+#include "../../src/type_policies/optional_floating.hpp"
 #include "../../src/type_policies/optional_string.hpp"
