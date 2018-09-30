@@ -41,19 +41,6 @@ namespace lua {
   };
   
   template <>
-  struct type_policy<unsigned double> : public detail::floating<unsigned double>  {
-  };
-
-  template <>
-  struct type_policy<const unsigned double> : public detail::floating<const unsigned double>  {
-  };
-  
-  template <>
-  struct type_policy<const unsigned double&> : public detail::floating<const unsigned double&>  {
-  };
-  
-  
-  template <>
   struct type_policy<float> : public detail::floating<float> {
   };
 
@@ -65,16 +52,5 @@ namespace lua {
   struct type_policy<const float&> : public detail::floating<const float&> {
   };
   
-  template <>
-  struct type_policy<unsigned float> : public detail::floating<unsigned float>  {
-  };
-
-  template <>
-  struct type_policy<const unsigned float> : public detail::floating<const unsigned float>  {
-  };
-  
-  template <>
-  struct type_policy<const unsigned float&> : public detail::floating<const unsigned float&>  {
-  };
 }
 
