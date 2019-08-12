@@ -14,6 +14,10 @@ public:                                         \
  inline void create() const {                   \
    s_.newtable();                               \
  }                                              \
+                                                \
+ inline bool is_nil() const {                   \
+   return s_.isnil(idx_);                       \
+ }                                              \
  
 #define LUACPP_TABLE_FIELD_STR_KEY(NAME, KEY_TYPE, VALUE_TYPE )         \
   struct NAME##_type_policy :                                           \
