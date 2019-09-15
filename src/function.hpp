@@ -4,9 +4,10 @@
   namespace lua {                                                       \
   namespace function {                                                  \
                                                                         \
-  typedef decltype(HANDLER_NAME) NAME##_c_function_type;                \
+  using NAME##_c_function_type = decltype(HANDLER_NAME);                \
+  struct NAME##_function_tag {};                                        \
   struct NAME##_function_descriptor :                                   \
-    public detail::function_descriptor<decltype(HANDLER_NAME)> {};      \
+    public detail::function_descriptor<NAME##_function_tag, decltype(HANDLER_NAME)> {}; \
                                                                         \
   struct NAME : public detail::function_base<NAME##_c_function_type> {  \
     typedef NAME type;                                                  \
@@ -254,7 +255,7 @@ namespace lua {
                               make_args_from_stack<I + 1, typename ::lua::tuple_tail_type<tuple_t>::type>(s));
       }
 
-      template <typename F>
+      template <typename Tag, typename F>
       struct function_descriptor {
         inline static function_descriptor& instance() {
           static function_descriptor i;
@@ -324,7 +325,7 @@ namespace lua {
                     typedef decltype(apply_tuple(fd->client_c_function, args)) result_type;
                     return apply<result_type>::call(s, fd->client_c_function, args);
                   } else {
-                    throw std::runtime_error("Luaccpp function " + std::string(name) +
+                    throw std::runtime_error("Luacpp function " + std::string(name) +
                                              " registered as taking " + std::to_string(n_args_expected) +
                                              " arguments, but was called with " + std::to_string(n_args));
                   }
