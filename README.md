@@ -32,27 +32,28 @@ and [qluacpp-tutorial](https://github.com/elelel/qluacpp-tutorial)
 
 #include <luacpp/luacpp>
 
-void main(int main(int argc, char *argv[]) {
- lua::state s;
- std::string str("Some string");
- char pchar[] = "Some string";
- // Push the variable to stack
- // The inferred template parameter is used by ::lua::type_policy<T> class
- // to get the methods that write/read values of T type
- s.push<>(str);
- // The last value on stack should be string
- // isstring is direct mapping of lua_isstring C API with lua state argument
- // replaced by *this making it a C++ method call on state
- assert(s.isstring(-1));
- // Read std::string from stack. Template parameter <std::string> is again used
- // to get type policy for reading/writing values of that type.
- // Argument -1 is the Lua stack index. Method get() is used to unpack
- // lua entity as std::string
- auto string_read = str.at<std::string>(-1).get();
- // Read the same stack location as const char*
- // Here operator() is used instead of get() (syntactic sugar
- auto string_read = str.at<char*>(-1)();  
- assert(str == string_read);
+int main(int argc, char *argv[]) {
+    lua::state s;
+    std::string str("Some string");
+    char pchar[] = "Some string";
+    // Push the variable to stack
+    // The inferred template parameter is used by ::lua::type_policy<T> class
+    // to get the methods that write/read values of T type
+    s.push<>(str);
+    // The last value on stack should be string
+    // isstring is direct mapping of lua_isstring C API with lua state argument
+    // replaced by *this making it a C++ method call on state
+    assert(s.isstring(-1));
+    // Read std::string from stack. Template parameter <std::string> is again used
+    // to get type policy for reading/writing values of that type.
+    // Argument -1 is the Lua stack index. Method get() is used to unpack
+    // lua entity as std::string
+    auto string_read = s.at<std::string>(-1).get();
+    assert(str == string_read);
+    // Read the same stack location as const char*
+    // Here operator() is used instead of get() (syntactic sugar
+    auto string_read_ch = s.at<char*>(-1)();
+    assert(str == string_read_ch);
 }
 ```
 
